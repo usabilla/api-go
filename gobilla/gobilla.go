@@ -9,10 +9,11 @@ import (
 
 func main() {
 	args := os.Args[1:]
+	// the zero index is the key and the first index is the secret
 	api := gobilla.NewAPI(args[0], args[1])
 
 	// limit for buttons does not work
-	buttons, err := api.Buttons.Get(nil)
+	buttons, err := api.Buttons.Get(map[string]string{"limit": "2"})
 	if err != nil {
 		panic(err)
 	}

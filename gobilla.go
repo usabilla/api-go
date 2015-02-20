@@ -14,7 +14,7 @@ type API struct {
 }
 
 /*
-NewAPI is used to create the API and set a key and secret.
+NewAPI is an API factory, which also sets the key and secret.
 */
 func NewAPI(k, s string) *API {
 	key = k

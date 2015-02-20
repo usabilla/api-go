@@ -14,16 +14,6 @@ const (
 )
 
 /*
-ButtonData ...
-*/
-type ButtonData struct {
-	Items         []Button `json:"items"`
-	Count         int      `json:"count"`
-	HasMore       bool     `json:"hasMore"`
-	LastTimestamp int64    `json:"lastTimestamp"`
-}
-
-/*
 Buttons represents the button resource of Usabilla API.
 */
 type Buttons struct {
@@ -56,16 +46,6 @@ func (buttons *Buttons) Get(params map[string]string) (ButtonData, error) {
 	}
 
 	return data, nil
-}
-
-/*
-FeedbackData ...
-*/
-type FeedbackData struct {
-	Items         []Feedback `json:"items"`
-	Count         int        `json:"count"`
-	HasMore       bool       `json:"hasMore"`
-	LastTimestamp int64      `json:"lastTimestamp"`
 }
 
 /*
@@ -105,16 +85,6 @@ func (feedbackItem *FeedbackItem) Get(buttonID string, params map[string]string)
 }
 
 /*
-CampaignData ...
-*/
-type CampaignData struct {
-	Items         []Campaign `json:"items"`
-	Count         int        `json:"count"`
-	HasMore       bool       `json:"hasMore"`
-	LastTimestamp int64      `json:"lastTimestamp"`
-}
-
-/*
 Campaigns represents the campaign resource of Usabilla API.
 */
 type Campaigns struct {
@@ -148,16 +118,6 @@ func (campaigns *Campaigns) Get(params map[string]string) (CampaignData, error) 
 	}
 
 	return data, nil
-}
-
-/*
-CampaignResultData ...
-*/
-type CampaignResultData struct {
-	Items         []CampaignResult `json:"items"`
-	Count         int              `json:"count"`
-	HasMore       bool             `json:"hasMore"`
-	LastTimestamp int64            `json:"lastTimestamp"`
 }
 
 /*
