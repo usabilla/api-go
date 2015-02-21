@@ -1,9 +1,6 @@
 package gobilla
 
-import (
-	"encoding/json"
-	"fmt"
-)
+import "fmt"
 
 /*
 Canonical URI constants.
@@ -38,14 +35,7 @@ func (buttons *Buttons) Get(params map[string]string) (ButtonData, error) {
 		panic(err)
 	}
 
-	data := ButtonData{}
-
-	err = json.Unmarshal(resp, &data)
-	if err != nil {
-		return data, err
-	}
-
-	return data, nil
+	return ButtonData{}.JSON(resp)
 }
 
 /*
@@ -74,14 +64,7 @@ func (feedbackItem *FeedbackItem) Get(buttonID string, params map[string]string)
 		panic(err)
 	}
 
-	data := FeedbackData{}
-
-	err = json.Unmarshal(resp, &data)
-	if err != nil {
-		return data, err
-	}
-
-	return data, nil
+	return FeedbackData{}.JSON(resp)
 }
 
 /*
@@ -110,14 +93,7 @@ func (campaigns *Campaigns) Get(params map[string]string) (CampaignData, error) 
 		panic(err)
 	}
 
-	data := CampaignData{}
-
-	err = json.Unmarshal(resp, &data)
-	if err != nil {
-		return data, err
-	}
-
-	return data, nil
+	return CampaignData{}.JSON(resp)
 }
 
 /*
@@ -147,12 +123,5 @@ func (campaignResults *CampaignResults) Get(campaignID string, params map[string
 		panic(err)
 	}
 
-	data := CampaignResultData{}
-
-	err = json.Unmarshal(resp, &data)
-	if err != nil {
-		return data, err
-	}
-
-	return data, nil
+	return CampaignResultData{}.JSON(resp)
 }
