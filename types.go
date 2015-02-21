@@ -3,7 +3,7 @@ package gobilla
 import "time"
 
 /*
-Feedback ...
+Feedback represents a feedback item.
 */
 type Feedback struct {
 	ID        string            `json:"id"`
@@ -24,7 +24,7 @@ type Feedback struct {
 }
 
 /*
-Campaign ...
+Campaign represents a campaign item.
 */
 type Campaign struct {
 	ID             string    `json:"id"`
@@ -36,7 +36,7 @@ type Campaign struct {
 }
 
 /*
-CampaignResult ...
+CampaignResult represents a campaign result item.
 */
 type CampaignResult struct {
 	ID         string            `json:"id"`
@@ -51,7 +51,7 @@ type CampaignResult struct {
 }
 
 /*
-Button ...
+Button represents a button item.
 */
 type Button struct {
 	ID   string `json:"id"`

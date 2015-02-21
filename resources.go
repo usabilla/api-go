@@ -29,11 +29,11 @@ Accepted query params are:
 - limit string
 */
 func (buttons *Buttons) Get(params map[string]string) (ButtonData, error) {
-	request := Request{
+	apiRequest := APIRequest{
 		CanonicalURI: ButtonURI,
 	}
 
-	resp, err := request.Get(params)
+	resp, err := apiRequest.Get(params)
 	if err != nil {
 		panic(err)
 	}
@@ -65,11 +65,11 @@ Accepted query params are:
 func (feedbackItem *FeedbackItem) Get(buttonID string, params map[string]string) (FeedbackData, error) {
 	feedbackURI := fmt.Sprintf(ButtonURI+"/%s/feedback", buttonID)
 
-	request := Request{
+	apiRequest := &APIRequest{
 		CanonicalURI: feedbackURI,
 	}
 
-	resp, err := request.Get(params)
+	resp, err := apiRequest.Get(params)
 	if err != nil {
 		panic(err)
 	}
@@ -101,11 +101,11 @@ Accepted query params are:
 - since string (Time stamp)
 */
 func (campaigns *Campaigns) Get(params map[string]string) (CampaignData, error) {
-	request := Request{
+	apiRequest := APIRequest{
 		CanonicalURI: CampaignURI,
 	}
 
-	resp, err := request.Get(params)
+	resp, err := apiRequest.Get(params)
 	if err != nil {
 		panic(err)
 	}
@@ -138,11 +138,11 @@ Accepted query params are:
 func (campaignResults *CampaignResults) Get(campaignID string, params map[string]string) (CampaignResultData, error) {
 	campaignURI := fmt.Sprintf(CampaignURI+"/%s/results", campaignID)
 
-	request := Request{
+	apiRequest := APIRequest{
 		CanonicalURI: campaignURI,
 	}
 
-	resp, err := request.Get(params)
+	resp, err := apiRequest.Get(params)
 	if err != nil {
 		panic(err)
 	}

@@ -15,16 +15,17 @@ const (
 )
 
 /*
-Request ...
+APIRequest ...
 */
-type Request struct {
+type APIRequest struct {
+	Request      *http.Request
 	CanonicalURI string
 }
 
 /*
 Get ...
 */
-func (req *Request) Get(params map[string]string) ([]byte, error) {
+func (req *APIRequest) Get(params map[string]string) ([]byte, error) {
 	now := time.Now()
 	rfcdate := now.Format(RFC1123GMT)
 	shortDate := now.Format(ShortDate)
@@ -32,22 +33,16 @@ func (req *Request) Get(params map[string]string) ([]byte, error) {
 
 	method := "GET"
 
-	url := fmt.Sprintf("%s://%s%s", scheme, host, req.CanonicalURI)
-
-	request, err := http.NewRequest(method, url, nil)
+	request, err := http.NewRequest(method, req.url(), nil)
 	if err != nil {
 		return nil, err
 	}
+	req.Request = request
 
-	request.Header.Add("date", rfcdate)
-	request.Header.Add("host", host)
+	req.Request.Header.Add("date", rfcdate)
+	req.Request.Header.Add("host", host)
 
-	v := request.URL.Query()
-	for key, value := range params {
-		v.Set(key, value)
-	}
-	canonicalQueryString := v.Encode()
-	request.URL.RawQuery = canonicalQueryString
+	canonicalQuery := req.canonicalQueryString(params)
 
 	canonicalHeaders := fmt.Sprintf("date:%s\nhost:%s\n", rfcdate, host)
 
@@ -59,7 +54,7 @@ func (req *Request) Get(params map[string]string) ([]byte, error) {
 		"%s\n%s\n%s\n%s\n%s\n%s",
 		method,
 		req.CanonicalURI,
-		canonicalQueryString,
+		canonicalQuery,
 		canonicalHeaders,
 		signedHeaders,
 		payloadHash,
@@ -107,4 +102,18 @@ func (req *Request) Get(params map[string]string) ([]byte, error) {
 	}
 
 	return body, nil
+}
+
+func (req *APIRequest) url() string {
+	return fmt.Sprintf("%s://%s%s", scheme, host, req.CanonicalURI)
+}
+
+func (req *APIRequest) canonicalQueryString(params map[string]string) string {
+	v := req.Request.URL.Query()
+	for key, value := range params {
+		v.Set(key, value)
+	}
+	canonicalQuery := v.Encode()
+	req.Request.URL.RawQuery = canonicalQuery
+	return canonicalQuery
 }
