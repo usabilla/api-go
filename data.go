@@ -3,15 +3,6 @@ package gobilla
 import "encoding/json"
 
 /*
-BaseData ...
-*/
-type BaseData struct {
-	Count         int   `json:"count"`
-	HasMore       bool  `json:"hasMore"`
-	LastTimestamp int64 `json:"lastTimestamp"`
-}
-
-/*
 Data ...
 */
 type Data interface {
@@ -22,7 +13,7 @@ type Data interface {
 ButtonData ...
 */
 type ButtonData struct {
-	BaseData
+	Response
 	Items []Button `json:"items"`
 }
 
@@ -41,8 +32,8 @@ func (data ButtonData) JSON(response []byte) (ButtonData, error) {
 FeedbackData ...
 */
 type FeedbackData struct {
-	BaseData
-	Items []Feedback `json:"items"`
+	Response
+	Items []FeedbackItem `json:"items"`
 }
 
 /*
@@ -60,7 +51,7 @@ func (data FeedbackData) JSON(response []byte) (FeedbackData, error) {
 CampaignData ...
 */
 type CampaignData struct {
-	BaseData
+	Response
 	Items []Campaign `json:"items"`
 }
 
@@ -79,7 +70,7 @@ func (data CampaignData) JSON(response []byte) (CampaignData, error) {
 CampaignResultData ...
 */
 type CampaignResultData struct {
-	BaseData
+	Response
 	Items []CampaignResult `json:"items"`
 }
 

@@ -1,27 +1,34 @@
 package gobilla
 
-var (
-	key    string
-	secret string
-)
-
-// Client is the client that exposes all the resources of the Usabilla API.
-type Client struct {
-	Buttons   Buttons
-	Campaigns Campaigns
+// Gobilla is the client that exposes all the resources of the Usabilla API.
+type Gobilla struct {
+	Key, Secret string
 }
 
-func (client *Client) Key(k string) {
-	key = k
+// Buttons encapsulate the button resource.
+func (gb *Gobilla) Buttons() Buttons {
+	au := auth{
+		key:    gb.Key,
+		secret: gb.Secret,
+	}
+	return Buttons{
+		resource: resource{
+			auth: au,
+			uri:  buttonURI,
+		},
+	}
 }
 
-func (client *Client) Secret(s string) {
-	secret = s
-}
-
-// NewClient creates a new Client instance and sets the key and secret.
-func NewClient(k, s string) Client {
-	key = k
-	secret = s
-	return Client{}
+// Campaigns encapsulate the campaign resource.
+func (gb *Gobilla) Campaigns() Campaigns {
+	au := auth{
+		key:    gb.Key,
+		secret: gb.Secret,
+	}
+	return Campaigns{
+		resource: resource{
+			auth: au,
+			uri:  campaignURI,
+		},
+	}
 }

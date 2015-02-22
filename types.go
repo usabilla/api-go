@@ -3,9 +3,17 @@ package gobilla
 import "time"
 
 /*
-Feedback represents a feedback item.
+Button represents a button item.
 */
-type Feedback struct {
+type Button struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+/*
+FeedbackItem represents a feedback item.
+*/
+type FeedbackItem struct {
 	ID        string            `json:"id"`
 	UserAgent string            `json:"userAgent"`
 	Comment   string            `json:"comment"`
@@ -50,10 +58,9 @@ type CampaignResult struct {
 	TotalTime  int64             `json:"time"`
 }
 
-/*
-Button represents a button item.
-*/
-type Button struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+// Response contains common data for an API response.
+type Response struct {
+	Count         int   `json:"count"`
+	HasMore       bool  `json:"hasMore"`
+	LastTimestamp int64 `json:"lastTimestamp"`
 }

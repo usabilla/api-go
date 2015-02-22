@@ -2,19 +2,24 @@ package gobilla
 
 import "fmt"
 
-/*
-Canonical URI constants.
-*/
+// Canonical URI constants.
 const (
-	ButtonURI   = "/live/website/button"
-	CampaignURI = "/live/website/campaign"
+	buttonURI          = "/live/website/button"
+	campaignURI        = "/live/website/campaign"
+	feedbackURI        = "/feedback"
+	campaignResultsURI = "/results"
 )
+
+type resource struct {
+	auth auth
+	uri  string
+}
 
 /*
 Buttons represents the button resource of Usabilla API.
 */
 type Buttons struct {
-	Feedback FeedbackItem
+	resource
 }
 
 /*
@@ -25,23 +30,38 @@ Accepted query params are:
 
 - limit string
 */
-func (buttons *Buttons) Get(params map[string]string) (ButtonData, error) {
-	apiRequest := APIRequest{
-		CanonicalURI: ButtonURI,
+func (b *Buttons) Get(params map[string]string) (ButtonData, error) {
+	request := Request{
+		method: "GET",
+		auth:   b.auth,
+		uri:    b.uri,
+		params: params,
 	}
 
-	resp, err := apiRequest.Get(params)
+	response, err := request.Get()
 	if err != nil {
 		panic(err)
 	}
 
-	return ButtonData{}.JSON(resp)
+	return ButtonData{}.JSON(response)
+}
+
+// Feedback encapsulates the feedback item resource.
+func (b *Buttons) Feedback() FeedbackItems {
+	uri := buttonURI + "/%s" + feedbackURI
+	return FeedbackItems{
+		resource: resource{
+			auth: b.auth,
+			uri:  uri,
+		},
+	}
 }
 
 /*
-FeedbackItem represents the feedback item resource of Usabilla API.
+FeedbackItems represents the feedback item resource of Usabilla API.
 */
-type FeedbackItem struct {
+type FeedbackItems struct {
+	resource
 }
 
 /*
@@ -52,14 +72,17 @@ Accepted query params are:
 
 - since string (Time stamp)
 */
-func (feedbackItem *FeedbackItem) Get(buttonID string, params map[string]string) (FeedbackData, error) {
-	feedbackURI := fmt.Sprintf(ButtonURI+"/%s/feedback", buttonID)
+func (f *FeedbackItems) Get(buttonID string, params map[string]string) (FeedbackData, error) {
+	uri := fmt.Sprintf(f.uri, buttonID)
 
-	apiRequest := &APIRequest{
-		CanonicalURI: feedbackURI,
+	request := &Request{
+		method: "GET",
+		auth:   f.auth,
+		uri:    uri,
+		params: params,
 	}
 
-	resp, err := apiRequest.Get(params)
+	resp, err := request.Get()
 	if err != nil {
 		panic(err)
 	}
@@ -71,7 +94,7 @@ func (feedbackItem *FeedbackItem) Get(buttonID string, params map[string]string)
 Campaigns represents the campaign resource of Usabilla API.
 */
 type Campaigns struct {
-	Results CampaignResults
+	resource
 }
 
 /*
@@ -83,12 +106,15 @@ Accepted query params are:
 - limit string
 - since string (Time stamp)
 */
-func (campaigns *Campaigns) Get(params map[string]string) (CampaignData, error) {
-	apiRequest := APIRequest{
-		CanonicalURI: CampaignURI,
+func (c *Campaigns) Get(params map[string]string) (CampaignData, error) {
+	request := Request{
+		method: "GET",
+		auth:   c.auth,
+		uri:    c.uri,
+		params: params,
 	}
 
-	resp, err := apiRequest.Get(params)
+	resp, err := request.Get()
 	if err != nil {
 		panic(err)
 	}
@@ -96,10 +122,22 @@ func (campaigns *Campaigns) Get(params map[string]string) (CampaignData, error) 
 	return CampaignData{}.JSON(resp)
 }
 
+// Results ...
+func (c *Campaigns) Results() CampaignResults {
+	uri := campaignURI + "/%s" + campaignResultsURI
+	return CampaignResults{
+		resource: resource{
+			auth: c.auth,
+			uri:  uri,
+		},
+	}
+}
+
 /*
 CampaignResults represents the campaign result resource of Usabilla API.
 */
 type CampaignResults struct {
+	resource
 }
 
 /*
@@ -111,14 +149,17 @@ Accepted query params are:
 - limit int
 - since string (Time stamp)
 */
-func (campaignResults *CampaignResults) Get(campaignID string, params map[string]string) (CampaignResultData, error) {
-	campaignURI := fmt.Sprintf(CampaignURI+"/%s/results", campaignID)
+func (r *CampaignResults) Get(campaignID string, params map[string]string) (CampaignResultData, error) {
+	campaignURI := fmt.Sprintf(r.uri, campaignID)
 
-	apiRequest := APIRequest{
-		CanonicalURI: campaignURI,
+	request := Request{
+		method: "GET",
+		auth:   r.auth,
+		uri:    campaignURI,
+		params: params,
 	}
 
-	resp, err := apiRequest.Get(params)
+	resp, err := request.Get()
 	if err != nil {
 		panic(err)
 	}

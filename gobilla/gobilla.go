@@ -10,27 +10,30 @@ import (
 func main() {
 	args := os.Args[1:]
 	// the zero index is the key and the first index is the secret
-	api := gobilla.NewClient(args[0], args[1])
+	gb := gobilla.Gobilla{Key: args[0], Secret: args[1]}
 
-	// limit for buttons does not work
-	buttons, err := api.Buttons.Get(map[string]string{"limit": "2"})
+	b := gb.Buttons()
+	buttons, err := b.Get(map[string]string{"limit": "2"}) // limit for buttons does not work
 	if err != nil {
 		panic(err)
 	}
+	f := b.Feedback()
 	for _, button := range buttons.Items {
-		feedback, err := api.Buttons.Feedback.Get(button.ID, nil)
+		feedback, err := f.Get(button.ID, nil)
 		if err != nil {
 			panic(err)
 		}
 		fmt.Printf("Feedback for button with id: %s\n%s\n", button.ID, feedback.Items)
 	}
 
-	campaigns, err := api.Campaigns.Get(nil)
+	c := gb.Campaigns()
+	campaigns, err := c.Get(map[string]string{"limit": "1"})
 	if err != nil {
 		panic(err)
 	}
+	r := c.Results()
 	for _, campaign := range campaigns.Items {
-		results, err := api.Campaigns.Results.Get(campaign.ID, map[string]string{"limit": "2"})
+		results, err := r.Get(campaign.ID, map[string]string{"limit": "2"})
 		if err != nil {
 			panic(err)
 		}

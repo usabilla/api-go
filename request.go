@@ -4,90 +4,47 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"time"
 )
 
 const (
-	scheme     = "http"
-	host       = "data.usabilla.com"
-	algorithm  = "USBL1-HMAC-SHA256"
-	terminator = "usbl1_request"
+	scheme = "http"
+	host   = "data.usabilla.com"
 )
 
 /*
-APIRequest ...
+Request ...
 */
-type APIRequest struct {
-	Request      *http.Request
-	CanonicalURI string
+type Request struct {
+	auth   auth
+	uri    string
+	method string
+	params map[string]string
 }
 
 /*
 Get ...
 */
-func (req *APIRequest) Get(params map[string]string) ([]byte, error) {
+func (r *Request) Get() ([]byte, error) {
 	now := time.Now()
 	rfcdate := now.Format(RFC1123GMT)
 	shortDate := now.Format(ShortDate)
 	shortDateTime := now.Format(ShortDateTime)
 
-	method := "GET"
-
-	request, err := http.NewRequest(method, req.url(), nil)
+	request, err := http.NewRequest(r.method, r.url(), nil)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
-	req.Request = request
 
-	req.Request.Header.Add("date", rfcdate)
-	req.Request.Header.Add("host", host)
+	request.Header.Add("date", rfcdate)
+	request.Header.Add("host", host)
 
-	canonicalQuery := req.canonicalQueryString(params)
+	request.URL.RawQuery = r.query()
 
-	canonicalHeaders := fmt.Sprintf("date:%s\nhost:%s\n", rfcdate, host)
+	stringToSign := r.stringToSign(rfcdate, host, shortDate, shortDateTime)
 
-	signedHeaders := "date;host"
-
-	payloadHash := hexHash([]byte(""))
-
-	canonicalRequest := fmt.Sprintf(
-		"%s\n%s\n%s\n%s\n%s\n%s",
-		method,
-		req.CanonicalURI,
-		canonicalQuery,
-		canonicalHeaders,
-		signedHeaders,
-		payloadHash,
-	)
-
-	credentialScope := shortDate + "/" + terminator
-
-	hashedCanonicalRequest := hexHash([]byte(canonicalRequest))
-
-	stringToSign := fmt.Sprintf(
-		"%s\n%s\n%s\n%s",
-		algorithm,
-		shortDateTime,
-		credentialScope,
-		hashedCanonicalRequest,
-	)
-
-	digest2 := keyedHash([]byte("USBL1"+secret), []byte(shortDate))
-
-	digest3 := keyedHash(digest2, []byte(terminator))
-
-	signature := hexKeyedHash(digest3, []byte(stringToSign))
-
-	authorizationHeader := fmt.Sprintf(
-		"%s Credential=%s/%s, SignedHeaders=%s, Signature=%s",
-		algorithm,
-		key,
-		credentialScope,
-		signedHeaders,
-		signature,
-	)
-
-	request.Header.Add("authorization", authorizationHeader)
+	request.Header.Add("authorization", r.auth.header(stringToSign, shortDate))
 
 	client := http.Client{}
 	resp, err := client.Do(request)
@@ -104,16 +61,48 @@ func (req *APIRequest) Get(params map[string]string) ([]byte, error) {
 	return body, nil
 }
 
-func (req *APIRequest) url() string {
-	return fmt.Sprintf("%s://%s%s", scheme, host, req.CanonicalURI)
+func (r *Request) url() string {
+	return fmt.Sprintf("%s://%s%s", scheme, host, r.uri)
 }
 
-func (req *APIRequest) canonicalQueryString(params map[string]string) string {
-	v := req.Request.URL.Query()
-	for key, value := range params {
+func (r *Request) canonicalRequest(rfcdate, host string) string {
+	return fmt.Sprintf(
+		"%s\n%s\n%s\n%s\n%s\n%s",
+		r.method,
+		r.uri,
+		r.query(),
+		r.canonicalHeaders(rfcdate, host),
+		r.auth.signedHeaders(),
+		r.payload(),
+	)
+}
+
+func (r *Request) query() string {
+	v := url.Values{}
+	for key, value := range r.params {
 		v.Set(key, value)
 	}
-	canonicalQuery := v.Encode()
-	req.Request.URL.RawQuery = canonicalQuery
-	return canonicalQuery
+	return v.Encode()
+}
+
+func (r *Request) canonicalHeaders(rfcdate, host string) string {
+	return fmt.Sprintf("date:%s\nhost:%s\n", rfcdate, host)
+}
+
+func (r *Request) payload() string {
+	return hexHash([]byte(""))
+}
+
+func (r *Request) hashedCanonicalRequest(rfcdate, host string) string {
+	return hexHash([]byte(r.canonicalRequest(rfcdate, host)))
+}
+
+func (r *Request) stringToSign(rfcdate, host, shortDate, shortDateTime string) string {
+	return fmt.Sprintf(
+		"%s\n%s\n%s\n%s",
+		algorithm,
+		shortDateTime,
+		r.auth.credentialScope(shortDate),
+		r.hashedCanonicalRequest(rfcdate, host),
+	)
 }
