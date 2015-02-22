@@ -10,7 +10,7 @@ import (
 func main() {
 	args := os.Args[1:]
 	// the zero index is the key and the first index is the secret
-	gb := gobilla.Gobilla{Key: args[0], Secret: args[1]}
+	gb := gobilla.New(args[0], args[1])
 
 	b := gb.Buttons()
 	buttons, err := b.Get(map[string]string{"limit": "2"}) // limit for buttons does not work

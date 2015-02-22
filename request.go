@@ -44,9 +44,9 @@ func (r *Request) Get() ([]byte, error) {
 
 	request.URL.RawQuery = query
 
-	stringToSign := r.auth.stringToSign(r.method, r.uri, query, rfcdate, host, shortDate, shortDateTime)
+	authHeader := r.auth.header(r.method, r.uri, query, rfcdate, host, shortDate, shortDateTime)
 
-	request.Header.Add("authorization", r.auth.header(stringToSign, shortDate))
+	request.Header.Add("authorization", authHeader)
 
 	client := http.Client{}
 	resp, err := client.Do(request)

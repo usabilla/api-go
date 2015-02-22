@@ -12,7 +12,8 @@ type auth struct {
 	key, secret string
 }
 
-func (au *auth) header(sts, shortDate string) string {
+func (au *auth) header(method, uri, query, rfcdate, host, shortDate, shortDateTime string) string {
+	sts := au.stringToSign(method, uri, query, rfcdate, host, shortDate, shortDateTime)
 	return fmt.Sprintf(
 		"%s Credential=%s/%s, SignedHeaders=%s, Signature=%s",
 		algorithm,
