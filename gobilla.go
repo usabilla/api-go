@@ -20,7 +20,6 @@ func (gb *Gobilla) Buttons() Buttons {
 	return Buttons{
 		resource: resource{
 			auth: gb.auth,
-			uri:  buttonURI,
 		},
 	}
 }
@@ -30,7 +29,6 @@ func (gb *Gobilla) Campaigns() Campaigns {
 	return Campaigns{
 		resource: resource{
 			auth: gb.auth,
-			uri:  campaignURI,
 		},
 	}
 }

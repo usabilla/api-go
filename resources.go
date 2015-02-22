@@ -4,15 +4,17 @@ import "fmt"
 
 // Canonical URI constants.
 const (
-	buttonURI          = "/live/website/button"
-	campaignURI        = "/live/website/campaign"
-	feedbackURI        = "/feedback"
-	campaignResultsURI = "/results"
+	buttonURI   = "/live/website/button"
+	campaignURI = "/live/website/campaign"
+)
+
+var (
+	feedbackURI        = buttonURI + "/%s/feedback"
+	campaignResultsURI = campaignURI + "/%s/results"
 )
 
 type resource struct {
 	auth auth
-	uri  string
 }
 
 /*
@@ -34,7 +36,7 @@ func (b *Buttons) Get(params map[string]string) (*ButtonResponse, error) {
 	request := Request{
 		method: "GET",
 		auth:   b.auth,
-		uri:    b.uri,
+		uri:    buttonURI,
 		params: params,
 	}
 
@@ -50,11 +52,9 @@ func (b *Buttons) Get(params map[string]string) (*ButtonResponse, error) {
 
 // Feedback encapsulates the feedback item resource.
 func (b *Buttons) Feedback() *FeedbackItems {
-	uri := buttonURI + "/%s" + feedbackURI
 	return &FeedbackItems{
 		resource: resource{
 			auth: b.auth,
-			uri:  uri,
 		},
 	}
 }
@@ -75,7 +75,7 @@ Accepted query params are:
 - since string (Time stamp)
 */
 func (f *FeedbackItems) Get(buttonID string, params map[string]string) (*FeedbackResponse, error) {
-	uri := fmt.Sprintf(f.uri, buttonID)
+	uri := fmt.Sprintf(feedbackURI, buttonID)
 
 	request := &Request{
 		method: "GET",
@@ -112,7 +112,7 @@ func (c *Campaigns) Get(params map[string]string) (*CampaignResponse, error) {
 	request := Request{
 		method: "GET",
 		auth:   c.auth,
-		uri:    c.uri,
+		uri:    campaignURI,
 		params: params,
 	}
 
@@ -128,11 +128,9 @@ func (c *Campaigns) Get(params map[string]string) (*CampaignResponse, error) {
 
 // Results ...
 func (c *Campaigns) Results() CampaignResults {
-	uri := campaignURI + "/%s" + campaignResultsURI
 	return CampaignResults{
 		resource: resource{
 			auth: c.auth,
-			uri:  uri,
 		},
 	}
 }
@@ -152,12 +150,12 @@ Accepted query params are:
 - since string (Time stamp)
 */
 func (r *CampaignResults) Get(campaignID string, params map[string]string) (*CampaignResultResponse, error) {
-	campaignURI := fmt.Sprintf(r.uri, campaignID)
+	uri := fmt.Sprintf(campaignResultsURI, campaignID)
 
 	request := Request{
 		method: "GET",
 		auth:   r.auth,
-		uri:    campaignURI,
+		uri:    uri,
 		params: params,
 	}
 
