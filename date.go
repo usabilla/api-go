@@ -1,5 +1,9 @@
 package gobilla
 
+import (
+	"time"
+)
+
 /*
 Date format constants.
 */
@@ -8,3 +12,15 @@ const (
 	ShortDate     = "20060102"
 	ShortDateTime = "20060102T150405Z"
 )
+
+func getRFC1123GMT(now time.Time) string {
+	return now.Format(RFC1123GMT)
+}
+
+func getShortDate(now time.Time) string {
+	return now.Format(ShortDate)
+}
+
+func getShortDateTime(now time.Time) string {
+	return now.Format(ShortDateTime)
+}

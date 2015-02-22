@@ -30,7 +30,7 @@ Accepted query params are:
 
 - limit string
 */
-func (b *Buttons) Get(params map[string]string) (ButtonData, error) {
+func (b *Buttons) Get(params map[string]string) (*ButtonResponse, error) {
 	request := Request{
 		method: "GET",
 		auth:   b.auth,
@@ -38,18 +38,20 @@ func (b *Buttons) Get(params map[string]string) (ButtonData, error) {
 		params: params,
 	}
 
-	response, err := request.Get()
+	data, err := request.Get()
 	if err != nil {
 		panic(err)
 	}
 
-	return ButtonData{}.JSON(response)
+	response := ButtonResponse{}
+
+	return response.JSON(data)
 }
 
 // Feedback encapsulates the feedback item resource.
-func (b *Buttons) Feedback() FeedbackItems {
+func (b *Buttons) Feedback() *FeedbackItems {
 	uri := buttonURI + "/%s" + feedbackURI
-	return FeedbackItems{
+	return &FeedbackItems{
 		resource: resource{
 			auth: b.auth,
 			uri:  uri,
@@ -72,7 +74,7 @@ Accepted query params are:
 
 - since string (Time stamp)
 */
-func (f *FeedbackItems) Get(buttonID string, params map[string]string) (FeedbackData, error) {
+func (f *FeedbackItems) Get(buttonID string, params map[string]string) (*FeedbackResponse, error) {
 	uri := fmt.Sprintf(f.uri, buttonID)
 
 	request := &Request{
@@ -82,17 +84,17 @@ func (f *FeedbackItems) Get(buttonID string, params map[string]string) (Feedback
 		params: params,
 	}
 
-	resp, err := request.Get()
+	data, err := request.Get()
 	if err != nil {
 		panic(err)
 	}
 
-	return FeedbackData{}.JSON(resp)
+	response := FeedbackResponse{}
+
+	return response.JSON(data)
 }
 
-/*
-Campaigns represents the campaign resource of Usabilla API.
-*/
+// Campaigns represents the campaign resource of Usabilla API.
 type Campaigns struct {
 	resource
 }
@@ -106,7 +108,7 @@ Accepted query params are:
 - limit string
 - since string (Time stamp)
 */
-func (c *Campaigns) Get(params map[string]string) (CampaignData, error) {
+func (c *Campaigns) Get(params map[string]string) (*CampaignResponse, error) {
 	request := Request{
 		method: "GET",
 		auth:   c.auth,
@@ -114,12 +116,14 @@ func (c *Campaigns) Get(params map[string]string) (CampaignData, error) {
 		params: params,
 	}
 
-	resp, err := request.Get()
+	data, err := request.Get()
 	if err != nil {
 		panic(err)
 	}
 
-	return CampaignData{}.JSON(resp)
+	response := CampaignResponse{}
+
+	return response.JSON(data)
 }
 
 // Results ...
@@ -133,9 +137,7 @@ func (c *Campaigns) Results() CampaignResults {
 	}
 }
 
-/*
-CampaignResults represents the campaign result resource of Usabilla API.
-*/
+// CampaignResults represents the campaign result resource of Usabilla API.
 type CampaignResults struct {
 	resource
 }
@@ -149,7 +151,7 @@ Accepted query params are:
 - limit int
 - since string (Time stamp)
 */
-func (r *CampaignResults) Get(campaignID string, params map[string]string) (CampaignResultData, error) {
+func (r *CampaignResults) Get(campaignID string, params map[string]string) (*CampaignResultResponse, error) {
 	campaignURI := fmt.Sprintf(r.uri, campaignID)
 
 	request := Request{
@@ -159,10 +161,12 @@ func (r *CampaignResults) Get(campaignID string, params map[string]string) (Camp
 		params: params,
 	}
 
-	resp, err := request.Get()
+	data, err := request.Get()
 	if err != nil {
 		panic(err)
 	}
 
-	return CampaignResultData{}.JSON(resp)
+	response := CampaignResultResponse{}
+
+	return response.JSON(data)
 }

@@ -5,7 +5,7 @@ type Gobilla struct {
 	auth auth
 }
 
-// New creates a new Gobilla instance.
+// New creates a new Gobilla instance and sets the auth with key and secret.
 func New(key, secret string) *Gobilla {
 	return &Gobilla{
 		auth: auth{

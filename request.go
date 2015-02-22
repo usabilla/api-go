@@ -27,15 +27,13 @@ type Request struct {
 Get ...
 */
 func (r *Request) Get() ([]byte, error) {
-	now := time.Now()
-	rfcdate := now.Format(RFC1123GMT)
-	shortDate := now.Format(ShortDate)
-	shortDateTime := now.Format(ShortDateTime)
-
 	request, err := http.NewRequest(r.method, r.url(), nil)
 	if err != nil {
 		panic(err)
 	}
+
+	now := time.Now()
+	rfcdate := getRFC1123GMT(now)
 
 	request.Header.Add("date", rfcdate)
 	request.Header.Add("host", host)
@@ -43,6 +41,9 @@ func (r *Request) Get() ([]byte, error) {
 	query := r.query()
 
 	request.URL.RawQuery = query
+
+	shortDate := getShortDate(now)
+	shortDateTime := getShortDateTime(now)
 
 	authHeader := r.auth.header(r.method, r.uri, query, rfcdate, host, shortDate, shortDateTime)
 
