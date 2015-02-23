@@ -17,21 +17,15 @@ type resource struct {
 	auth auth
 }
 
-/*
-Buttons represents the button resource of Usabilla API.
-*/
+// Buttons represents the button resource of Usabilla API.
 type Buttons struct {
 	resource
 }
 
-/*
-Get function of Buttons resource returns all the buttons
-taking into account the specified query params.
-
-Accepted query params are:
-
-- limit string
-*/
+// Get function of Buttons resource returns all the buttons
+// taking into account the specified query params.
+// Accepted query params are:
+// - limit string
 func (b *Buttons) Get(params map[string]string) (*ButtonResponse, error) {
 	request := Request{
 		method: "GET",
@@ -59,21 +53,15 @@ func (b *Buttons) Feedback() *FeedbackItems {
 	}
 }
 
-/*
-FeedbackItems represents the feedback item resource of Usabilla API.
-*/
+// FeedbackItems represents the feedback item subresource of Usabilla API.
 type FeedbackItems struct {
 	resource
 }
 
-/*
-Get function of FeedbackItem resource returns all the feedback items
-for a specific button, taking into account the passed query params.
-
-Accepted query params are:
-
-- since string (Time stamp)
-*/
+// Get function of FeedbackItem resource returns all the feedback items
+// for a specific button, taking into account the passed query params.
+// Accepted query params are:
+// - since string (Time stamp)
 func (f *FeedbackItems) Get(buttonID string, params map[string]string) (*FeedbackResponse, error) {
 	uri := fmt.Sprintf(feedbackURI, buttonID)
 
@@ -99,15 +87,11 @@ type Campaigns struct {
 	resource
 }
 
-/*
-Get function of Campaigns resource returns all the campaigns
-taking into account the passed query params.
-
-Accepted query params are:
-
-- limit string
-- since string (Time stamp)
-*/
+// Get function of Campaigns resource returns all the campaigns
+// taking into account the passed query params.
+// Accepted query params are:
+// - limit string
+// - since string (Time stamp)
 func (c *Campaigns) Get(params map[string]string) (*CampaignResponse, error) {
 	request := Request{
 		method: "GET",
@@ -127,8 +111,8 @@ func (c *Campaigns) Get(params map[string]string) (*CampaignResponse, error) {
 }
 
 // Results ...
-func (c *Campaigns) Results() CampaignResults {
-	return CampaignResults{
+func (c *Campaigns) Results() *CampaignResults {
+	return &CampaignResults{
 		resource: resource{
 			auth: c.auth,
 		},
@@ -140,15 +124,11 @@ type CampaignResults struct {
 	resource
 }
 
-/*
-Get function of CampaignResults resource returns all the campaign result items
-for a specific campaign, taking into account the passed query params.
-
-Accepted query params are:
-
-- limit int
-- since string (Time stamp)
-*/
+// Get function of CampaignResults resource returns all the campaign result items
+// for a specific campaign, taking into account the passed query params.
+// Accepted query params are:
+// - limit int
+// - since string (Time stamp)
 func (r *CampaignResults) Get(campaignID string, params map[string]string) (*CampaignResultResponse, error) {
 	uri := fmt.Sprintf(campaignResultsURI, campaignID)
 

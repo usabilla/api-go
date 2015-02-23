@@ -14,14 +14,13 @@ type auth struct {
 
 // Create the authorization header.
 func (au *auth) header(method, uri, query, rfcdate, host, shortDate, shortDateTime string) string {
-	sts := au.stringToSign(method, uri, query, rfcdate, host, shortDate, shortDateTime)
 	return fmt.Sprintf(
 		"%s Credential=%s/%s, SignedHeaders=%s, Signature=%s",
 		algorithm,
 		au.key,
 		au.credentialScope(shortDate),
 		au.signedHeaders(),
-		au.signature(sts, shortDate),
+		au.signature(method, uri, query, rfcdate, host, shortDate, shortDateTime),
 	)
 }
 
@@ -31,10 +30,12 @@ func (au *auth) credentialScope(shortDate string) string {
 }
 
 // Create a signature using the string to sign.
-func (au *auth) signature(sts, shortDate string) string {
+func (au *auth) signature(method, uri, query, rfcdate, host, shortDate, shortDateTime string) string {
 	dig := keyedHash([]byte(startor+au.secret), []byte(shortDate))
 
 	dig = keyedHash(dig, []byte(terminator))
+
+	sts := au.stringToSign(method, uri, query, rfcdate, host, shortDate, shortDateTime)
 
 	return hexKeyedHash(dig, []byte(sts))
 }

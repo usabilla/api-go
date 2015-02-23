@@ -13,9 +13,7 @@ const (
 	host   = "data.usabilla.com"
 )
 
-/*
-Request ...
-*/
+// Request is a request that the client makes to the API.
 type Request struct {
 	auth   auth
 	uri    string
@@ -23,9 +21,7 @@ type Request struct {
 	params map[string]string
 }
 
-/*
-Get ...
-*/
+// Get issues a GET request to the API and uses auth to set the authorization header.
 func (r *Request) Get() ([]byte, error) {
 	request, err := http.NewRequest(r.method, r.url(), nil)
 	if err != nil {

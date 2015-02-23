@@ -9,17 +9,13 @@ type Response struct {
 	LastTimestamp int64 `json:"lastTimestamp"`
 }
 
-/*
-ButtonResponse ...
-*/
+// ButtonResponse is a response that contains button data.
 type ButtonResponse struct {
 	Response
 	Items []Button `json:"items"`
 }
 
-/*
-JSON ...
-*/
+// JSON response.
 func (response *ButtonResponse) JSON(data []byte) (*ButtonResponse, error) {
 	err := json.Unmarshal(data, &response)
 	if err != nil {
@@ -28,17 +24,13 @@ func (response *ButtonResponse) JSON(data []byte) (*ButtonResponse, error) {
 	return response, nil
 }
 
-/*
-FeedbackResponse ...
-*/
+// FeedbackResponse is a response that contains feedback item data.
 type FeedbackResponse struct {
 	Response
 	Items []FeedbackItem `json:"items"`
 }
 
-/*
-JSON ...
-*/
+// JSON response.
 func (response *FeedbackResponse) JSON(data []byte) (*FeedbackResponse, error) {
 	err := json.Unmarshal(data, &response)
 	if err != nil {
@@ -47,17 +39,13 @@ func (response *FeedbackResponse) JSON(data []byte) (*FeedbackResponse, error) {
 	return response, nil
 }
 
-/*
-CampaignResponse ...
-*/
+// CampaignResponse is a response that contains campaign data.
 type CampaignResponse struct {
 	Response
 	Items []Campaign `json:"items"`
 }
 
-/*
-JSON ...
-*/
+// JSON response.
 func (response *CampaignResponse) JSON(data []byte) (*CampaignResponse, error) {
 	err := json.Unmarshal(data, &response)
 	if err != nil {
@@ -66,17 +54,13 @@ func (response *CampaignResponse) JSON(data []byte) (*CampaignResponse, error) {
 	return response, nil
 }
 
-/*
-CampaignResultResponse ...
-*/
+// CampaignResultResponse is a response that contains campaign result data.
 type CampaignResultResponse struct {
 	Response
 	Items []CampaignResult `json:"items"`
 }
 
-/*
-JSON ...
-*/
+// JSON response.
 func (response *CampaignResultResponse) JSON(data []byte) (*CampaignResultResponse, error) {
 	err := json.Unmarshal(data, &response)
 	if err != nil {
