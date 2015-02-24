@@ -15,8 +15,8 @@ type ButtonResponse struct {
 	Items []Button `json:"items"`
 }
 
-// JSON response.
-func (response *ButtonResponse) JSON(data []byte) (*ButtonResponse, error) {
+// Unmarshal json API button response to Go struct.
+func (response *ButtonResponse) unmarshal(data []byte) (*ButtonResponse, error) {
 	err := json.Unmarshal(data, &response)
 	if err != nil {
 		return response, err
@@ -30,8 +30,8 @@ type FeedbackResponse struct {
 	Items []FeedbackItem `json:"items"`
 }
 
-// JSON response.
-func (response *FeedbackResponse) JSON(data []byte) (*FeedbackResponse, error) {
+// Unmarshal json API feeddback items response to Go struct.
+func (response *FeedbackResponse) unmarshal(data []byte) (*FeedbackResponse, error) {
 	err := json.Unmarshal(data, &response)
 	if err != nil {
 		return response, err
@@ -45,8 +45,8 @@ type CampaignResponse struct {
 	Items []Campaign `json:"items"`
 }
 
-// JSON response.
-func (response *CampaignResponse) JSON(data []byte) (*CampaignResponse, error) {
+// Unmarshal json API campaign response to Go struct.
+func (response *CampaignResponse) unmarshal(data []byte) (*CampaignResponse, error) {
 	err := json.Unmarshal(data, &response)
 	if err != nil {
 		return response, err
@@ -60,8 +60,8 @@ type CampaignResultResponse struct {
 	Items []CampaignResult `json:"items"`
 }
 
-// JSON response.
-func (response *CampaignResultResponse) JSON(data []byte) (*CampaignResultResponse, error) {
+// Unmarshal json API campaign results response to Go struct.
+func (response *CampaignResultResponse) unmarshal(data []byte) (*CampaignResultResponse, error) {
 	err := json.Unmarshal(data, &response)
 	if err != nil {
 		return response, err

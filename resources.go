@@ -41,7 +41,7 @@ func (b *Buttons) Get(params map[string]string) (*ButtonResponse, error) {
 
 	response := ButtonResponse{}
 
-	return response.JSON(data)
+	return response.unmarshal(data)
 }
 
 // Feedback encapsulates the feedback item resource.
@@ -79,7 +79,7 @@ func (f *FeedbackItems) Get(buttonID string, params map[string]string) (*Feedbac
 
 	response := FeedbackResponse{}
 
-	return response.JSON(data)
+	return response.unmarshal(data)
 }
 
 // Campaigns represents the campaign resource of Usabilla API.
@@ -107,7 +107,7 @@ func (c *Campaigns) Get(params map[string]string) (*CampaignResponse, error) {
 
 	response := CampaignResponse{}
 
-	return response.JSON(data)
+	return response.unmarshal(data)
 }
 
 // Results ...
@@ -146,5 +146,5 @@ func (r *CampaignResults) Get(campaignID string, params map[string]string) (*Cam
 
 	response := CampaignResultResponse{}
 
-	return response.JSON(data)
+	return response.unmarshal(data)
 }
