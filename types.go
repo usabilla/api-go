@@ -39,13 +39,13 @@ type Campaign struct {
 
 // CampaignResult represents a campaign result item.
 type CampaignResult struct {
-	ID         string            `json:"id"`
-	UserAgent  string            `json:"userAgent"`
-	Location   string            `json:"location"`
-	Date       time.Time         `json:"date"`
-	CampaignID string            `json:"campaignId"`
-	Custom     map[string]string `json:"customData"`
-	Data       map[string]string `json:"data"`
-	URL        string            `json:"url"`
-	TotalTime  int64             `json:"time"`
+	ID         string                 `json:"id"`
+	UserAgent  string                 `json:"userAgent"`
+	Location   string                 `json:"location"`
+	Date       time.Time              `json:"date"`
+	CampaignID string                 `json:"campaignId"`
+	Custom     map[string]string      `json:"customData"`
+	Data       map[string]interface{} `json:"data"`
+	URL        string                 `json:"url"`
+	TotalTime  int64                  `json:"time"`
 }

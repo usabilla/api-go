@@ -16,12 +16,11 @@ func buttons(key, secret string) {
 		fmt.Errorf("%s", err)
 	}
 	for _, button := range buttons.Items {
-		fmt.Println(button)
-		// feedback, err := b.Feedback().Get(button["id"], nil)
-		// if err != nil {
-		// 	fmt.Errorf("%s", err)
-		// }
-		// fmt.Printf("Feedback for button with id: %s\n%s\n", button.ID, feedback.Items)
+		feedback, err := b.Feedback().Get(button.ID, nil)
+		if err != nil {
+			fmt.Errorf("%s", err)
+		}
+		fmt.Printf("Feedback for button with id: %s\n%s\n", button.ID, feedback.Items)
 	}
 }
 
@@ -49,5 +48,5 @@ func main() {
 
 	buttons(args[0], args[1])
 
-	// campaigns(args[0], args[1])
+	campaigns(args[0], args[1])
 }

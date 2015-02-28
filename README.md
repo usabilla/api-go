@@ -34,6 +34,8 @@ Then run the file using the key and secret as command line arguments:
 
     go run main.go key secret
 
-You will get the feedback items for all the buttons.
+You will get feedback items for each button.
 
-You can find a more detailed example [here](gobilla/gobilla.go).
+You can find a more detailed example [here](example/main.go), which you can run form the root directory of the project as
+
+    go run example/main.go key secret

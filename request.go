@@ -14,15 +14,19 @@ const (
 )
 
 // Request is a request that the client makes to the API.
+// You can provide a custom http.Client to change the way the client works
+// and handles requests.
 type Request struct {
 	auth   auth
 	uri    string
 	method string
 	params map[string]string
+	client http.Client
 }
 
 // Get issues a GET request to the API and uses auth to set the authorization header.
 func (r *Request) Get() ([]byte, error) {
+	// Request also escapes whatever URL is passed here as string
 	request, err := http.NewRequest(r.method, r.url(), nil)
 	if err != nil {
 		panic(err)
@@ -45,8 +49,7 @@ func (r *Request) Get() ([]byte, error) {
 
 	request.Header.Add("authorization", authHeader)
 
-	client := http.Client{}
-	resp, err := client.Do(request)
+	resp, err := r.client.Do(request)
 	if err != nil {
 		return nil, err
 	}
