@@ -12,13 +12,13 @@ const (
 )
 
 func getRFC1123GMT(now time.Time) string {
-	return now.Format(RFC1123GMT)
+	return now.UTC().Format(RFC1123GMT)
 }
 
 func getShortDate(now time.Time) string {
-	return now.Format(ShortDate)
+	return now.UTC().Format(ShortDate)
 }
 
 func getShortDateTime(now time.Time) string {
-	return now.Format(ShortDateTime)
+	return now.UTC().Format(ShortDateTime)
 }
