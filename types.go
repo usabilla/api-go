@@ -10,21 +10,22 @@ type Button struct {
 
 // FeedbackItem represents a feedback item.
 type FeedbackItem struct {
-	ID        string            `json:"id"`
-	UserAgent string            `json:"userAgent"`
-	Comment   string            `json:"comment"`
-	Location  string            `json:"location"`
-	Date      time.Time         `json:"date"`
-	Custom    map[string]string `json:"custom"`
-	Email     string            `json:"email"`
-	Image     string            `json:"image"`
-	Labels    []string          `json:"labels"`
-	NPS       string            `json:"nps"`
-	PublicURL string            `json:"publicUrl"`
-	Rating    string            `json:"rating"`
-	ButtonID  string            `json:"buttonId"`
-	Tags      []string          `json:"tags"`
-	URL       string            `json:"url"`
+	ID          string            `json:"id"`
+	UserAgent   string            `json:"userAgent"`
+	Comment     string            `json:"comment"`
+	Location    string            `json:"location"`
+	Date        time.Time         `json:"date"`
+	Custom      map[string]string `json:"custom"`
+	Email       string            `json:"email"`
+	HTMLSnippet string            `json:"htmlSnippet"`
+	Image       string            `json:"image"`
+	Labels      []string          `json:"labels"`
+	NPS         int               `json:"nps"`
+	PublicURL   string            `json:"publicUrl"`
+	Rating      int               `json:"rating"`
+	ButtonID    string            `json:"buttonId"`
+	Tags        []string          `json:"tags"`
+	URL         string            `json:"url"`
 }
 
 // Campaign represents a campaign item.
@@ -47,5 +48,5 @@ type CampaignResult struct {
 	Custom     map[string]string      `json:"customData"`
 	Data       map[string]interface{} `json:"data"`
 	URL        string                 `json:"url"`
-	TotalTime  int64                  `json:"time"`
+	TotalTime  float64                `json:"time"`
 }

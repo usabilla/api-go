@@ -1,6 +1,9 @@
 package gobilla
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 // Canonical URI constants.
 const (
@@ -79,7 +82,49 @@ func (f *FeedbackItems) Get(buttonID string, params map[string]string) (*Feedbac
 
 	response := FeedbackResponse{}
 
-	return response.unmarshal(data)
+	resp, err := response.unmarshal(data)
+
+	return resp, err
+}
+
+// Iterate ...
+func (f *FeedbackItems) Iterate(buttonID string, params map[string]string) chan FeedbackItem {
+	resp, err := f.Get(buttonID, params)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fic := make(chan FeedbackItem)
+
+	go items(fic, resp, f, buttonID)
+
+	return fic
+}
+
+func items(fic chan FeedbackItem, resp *FeedbackResponse, f *FeedbackItems, buttonID string) {
+	for {
+		for _, item := range resp.Items {
+			fic <- item
+		}
+		if !resp.HasMore {
+			close(fic)
+			return
+		}
+		params := map[string]string{
+			"since": strconv.FormatInt(resp.LastTimestamp, 10),
+		}
+
+		resp, err := f.Get(buttonID, params)
+
+		if err != nil {
+			panic(err)
+		}
+
+		go items(fic, resp, f, buttonID)
+
+		return
+	}
 }
 
 // Campaigns represents the campaign resource of Usabilla API.
@@ -147,4 +192,44 @@ func (r *CampaignResults) Get(campaignID string, params map[string]string) (*Cam
 	response := CampaignResultResponse{}
 
 	return response.unmarshal(data)
+}
+
+// Iterate ...
+func (r *CampaignResults) Iterate(campaignID string, params map[string]string) chan CampaignResult {
+	resp, err := r.Get(campaignID, params)
+
+	if err != nil {
+		panic(err)
+	}
+
+	crc := make(chan CampaignResult)
+
+	go campaignResults(crc, resp, r, campaignID)
+
+	return crc
+}
+
+func campaignResults(crc chan CampaignResult, resp *CampaignResultResponse, r *CampaignResults, campaignID string) {
+	for {
+		for _, item := range resp.Items {
+			crc <- item
+		}
+		if !resp.HasMore {
+			close(crc)
+			return
+		}
+		params := map[string]string{
+			"since": strconv.FormatInt(resp.LastTimestamp, 10),
+		}
+
+		resp, err := r.Get(campaignID, params)
+
+		if err != nil {
+			panic(err)
+		}
+
+		go campaignResults(crc, resp, r, campaignID)
+
+		return
+	}
 }
