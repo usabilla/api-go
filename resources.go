@@ -7,8 +7,8 @@ import (
 
 // Canonical URI constants.
 const (
-	buttonURI   = "/live/website/button"
-	campaignURI = "/live/website/campaign"
+	buttonURI   = "/live/websites/button"
+	campaignURI = "/live/websites/campaign"
 )
 
 var (
@@ -27,6 +27,7 @@ type Buttons struct {
 
 // Get function of Buttons resource returns all the buttons
 // taking into account the specified query params.
+//
 // Accepted query params are:
 // - limit string
 func (b *Buttons) Get(params map[string]string) (*ButtonResponse, error) {
@@ -42,9 +43,7 @@ func (b *Buttons) Get(params map[string]string) (*ButtonResponse, error) {
 		panic(err)
 	}
 
-	response := ButtonResponse{}
-
-	return response.unmarshal(data)
+	return NewButtonResponse(data)
 }
 
 // Feedback encapsulates the feedback item resource.
@@ -63,6 +62,7 @@ type FeedbackItems struct {
 
 // Get function of FeedbackItem resource returns all the feedback items
 // for a specific button, taking into account the passed query params.
+//
 // Accepted query params are:
 // - since string (Time stamp)
 func (f *FeedbackItems) Get(buttonID string, params map[string]string) (*FeedbackResponse, error) {
@@ -80,14 +80,11 @@ func (f *FeedbackItems) Get(buttonID string, params map[string]string) (*Feedbac
 		panic(err)
 	}
 
-	response := FeedbackResponse{}
-
-	resp, err := response.unmarshal(data)
-
-	return resp, err
+	return NewFeedbackResponse(data)
 }
 
-// Iterate ...
+// Iterate uses a FeedbackItem channel which transparently uses the HasMore field to fire
+// a new api request once all items have been consumed on the channel
 func (f *FeedbackItems) Iterate(buttonID string, params map[string]string) chan FeedbackItem {
 	resp, err := f.Get(buttonID, params)
 
@@ -134,6 +131,7 @@ type Campaigns struct {
 
 // Get function of Campaigns resource returns all the campaigns
 // taking into account the passed query params.
+//
 // Accepted query params are:
 // - limit string
 // - since string (Time stamp)
@@ -150,12 +148,10 @@ func (c *Campaigns) Get(params map[string]string) (*CampaignResponse, error) {
 		panic(err)
 	}
 
-	response := CampaignResponse{}
-
-	return response.unmarshal(data)
+	return NewCampaignResponse(data)
 }
 
-// Results ...
+// Results encapsulates the campaign results resource.
 func (c *Campaigns) Results() *CampaignResults {
 	return &CampaignResults{
 		resource: resource{
@@ -171,6 +167,7 @@ type CampaignResults struct {
 
 // Get function of CampaignResults resource returns all the campaign result items
 // for a specific campaign, taking into account the passed query params.
+//
 // Accepted query params are:
 // - limit int
 // - since string (Time stamp)
@@ -189,12 +186,11 @@ func (r *CampaignResults) Get(campaignID string, params map[string]string) (*Cam
 		panic(err)
 	}
 
-	response := CampaignResultResponse{}
-
-	return response.unmarshal(data)
+	return NewCampaignResultResponse(data)
 }
 
-// Iterate ...
+// Iterate uses a CampaignResult channel which transparently uses the HasMore field to fire
+// a new api request once all results have been consumed on the channel
 func (r *CampaignResults) Iterate(campaignID string, params map[string]string) chan CampaignResult {
 	resp, err := r.Get(campaignID, params)
 

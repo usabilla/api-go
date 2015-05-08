@@ -14,8 +14,7 @@ const (
 )
 
 // Request is a request that the client makes to the API.
-// You can provide a custom http.Client to change the way the client works
-// and handles requests.
+// You can provide a custom http.Client to change the way the client works and handles requests.
 type Request struct {
 	auth   auth
 	uri    string

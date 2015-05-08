@@ -15,12 +15,15 @@ type ButtonResponse struct {
 	Items []Button `json:"items"`
 }
 
-// Unmarshal json API button response to Go struct.
-func (response *ButtonResponse) unmarshal(data []byte) (*ButtonResponse, error) {
+// NewButtonResponse creates a button response and unmarshals json API button response to Go struct.
+func NewButtonResponse(data []byte) (*ButtonResponse, error) {
+	response := &ButtonResponse{}
+
 	err := json.Unmarshal(data, &response)
 	if err != nil {
 		return response, err
 	}
+
 	return response, nil
 }
 
@@ -30,12 +33,15 @@ type FeedbackResponse struct {
 	Items []FeedbackItem `json:"items"`
 }
 
-// Unmarshal json API feeddback items response to Go struct.
-func (response *FeedbackResponse) unmarshal(data []byte) (*FeedbackResponse, error) {
+// NewFeedbackResponse creates a feedback response and unmarshals json API feeddback items response to Go struct.
+func NewFeedbackResponse(data []byte) (*FeedbackResponse, error) {
+	response := &FeedbackResponse{}
+
 	err := json.Unmarshal(data, &response)
 	if err != nil {
 		return response, err
 	}
+
 	return response, nil
 }
 
@@ -45,12 +51,15 @@ type CampaignResponse struct {
 	Items []Campaign `json:"items"`
 }
 
-// Unmarshal json API campaign response to Go struct.
-func (response *CampaignResponse) unmarshal(data []byte) (*CampaignResponse, error) {
+// NewCampaignResponse creates a campaign response and unmarshals json API campaign response to Go struct.
+func NewCampaignResponse(data []byte) (*CampaignResponse, error) {
+	response := &CampaignResponse{}
+
 	err := json.Unmarshal(data, &response)
 	if err != nil {
 		return response, err
 	}
+
 	return response, nil
 }
 
@@ -60,11 +69,15 @@ type CampaignResultResponse struct {
 	Items []CampaignResult `json:"items"`
 }
 
-// Unmarshal json API campaign results response to Go struct.
-func (response *CampaignResultResponse) unmarshal(data []byte) (*CampaignResultResponse, error) {
+// NewCampaignResultResponse creates a new campaign result response and unmarshals json API
+// campaign results response to Go struct.
+func NewCampaignResultResponse(data []byte) (*CampaignResultResponse, error) {
+	response := &CampaignResultResponse{}
+
 	err := json.Unmarshal(data, &response)
 	if err != nil {
 		return response, err
 	}
+
 	return response, nil
 }
