@@ -81,3 +81,22 @@ func NewCampaignResultResponse(data []byte) (*CampaignResultResponse, error) {
 
 	return response, nil
 }
+
+// CampaignStatsResponse is a response that contains campaign statistics data.
+type CampaignStatsResponse struct {
+	Response
+	Items []CampaignStat `json:"items"`
+}
+
+// NewCampaignStatsResponse creates a new campaign statistics response and unmarshals json API
+// campaign statistics response to Go struct.
+func NewCampaignStatsResponse(data []byte) (*CampaignStatsResponse, error) {
+	response := &CampaignStatsResponse{}
+
+	err := json.Unmarshal(data, &response)
+	if err != nil {
+		return response, err
+	}
+
+	return response, nil
+}

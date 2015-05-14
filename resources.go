@@ -7,13 +7,15 @@ import (
 
 // Canonical URI constants.
 const (
-	buttonURI   = "/live/websites/button"
-	campaignURI = "/live/websites/campaign"
+	websitesURI = "/live/websites"
+	buttonURI   = websitesURI + "/button"
+	campaignURI = websitesURI + "/campaign"
 )
 
 var (
 	feedbackURI        = buttonURI + "/%s/feedback"
 	campaignResultsURI = campaignURI + "/%s/results"
+	campaignStatsURI   = campaignURI + "/%s/stats"
 )
 
 type resource struct {
@@ -61,7 +63,7 @@ type FeedbackItems struct {
 }
 
 // Get function of FeedbackItem resource returns all the feedback items
-// for a specific button, taking into account the passed query params.
+// for a specific button, taking into account the provided query params.
 //
 // Accepted query params are:
 // - since string (Time stamp)
@@ -99,6 +101,13 @@ func (f *FeedbackItems) Iterate(buttonID string, params map[string]string) chan 
 	return fic
 }
 
+// items feeds a feedback item channel with items
+//
+// while hasMore is true and all items have been consumed in the channel
+// a new request is fired using the since parameter of the response, to
+// retrieve new items
+//
+// when HasMore is false, we close the channel
 func items(fic chan FeedbackItem, resp *FeedbackResponse, f *FeedbackItems, buttonID string) {
 	for {
 		for _, item := range resp.Items {
@@ -130,7 +139,7 @@ type Campaigns struct {
 }
 
 // Get function of Campaigns resource returns all the campaigns
-// taking into account the passed query params.
+// taking into account the provided query params.
 //
 // Accepted query params are:
 // - limit string
@@ -166,7 +175,7 @@ type CampaignResults struct {
 }
 
 // Get function of CampaignResults resource returns all the campaign result items
-// for a specific campaign, taking into account the passed query params.
+// for a specific campaign, taking into account the provided query params.
 //
 // Accepted query params are:
 // - limit int
@@ -205,6 +214,13 @@ func (r *CampaignResults) Iterate(campaignID string, params map[string]string) c
 	return crc
 }
 
+// campaignResults feeds a campaign results channel with items
+//
+// while hasMore is true and all items have been consumed in the channel
+// a new request is fired using the since parameter of the response, to
+// retrieve new items
+//
+// when HasMore is false, we close the channel
 func campaignResults(crc chan CampaignResult, resp *CampaignResultResponse, r *CampaignResults, campaignID string) {
 	for {
 		for _, item := range resp.Items {
@@ -225,6 +241,92 @@ func campaignResults(crc chan CampaignResult, resp *CampaignResultResponse, r *C
 		}
 
 		go campaignResults(crc, resp, r, campaignID)
+
+		return
+	}
+}
+
+// Stats encapsulates the campaign statistics resource.
+func (c *Campaigns) Stats() *CampaignStats {
+	return &CampaignStats{
+		resource: resource{
+			auth: c.auth,
+		},
+	}
+}
+
+// CampaignStats represents the campaign statistics resource of Usabilla API.
+type CampaignStats struct {
+	resource
+}
+
+// Get function of CampaignStats resource returns the campaign statistics
+// for a specific campaign, taking into account the provided query params.
+//
+// Accepted query params are:
+// - limit int
+// - since string (Time stamp)
+func (cs *CampaignStats) Get(campaignID string, params map[string]string) (*CampaignStatsResponse, error) {
+	uri := fmt.Sprintf(campaignStatsURI, campaignID)
+
+	request := Request{
+		method: "GET",
+		auth:   cs.auth,
+		uri:    uri,
+		params: params,
+	}
+
+	data, err := request.Get()
+	if err != nil {
+		panic(err)
+	}
+
+	return NewCampaignStatsResponse(data)
+}
+
+// Iterate uses a CampaignStat channel which transparently uses the HasMore field to fire
+// a new api request once all stats items have been consumed on the channel
+func (cs *CampaignStats) Iterate(campaignID string, params map[string]string) chan CampaignStat {
+	resp, err := cs.Get(campaignID, params)
+
+	if err != nil {
+		panic(err)
+	}
+
+	csc := make(chan CampaignStat)
+
+	go campaignStats(csc, resp, cs, campaignID)
+
+	return csc
+}
+
+// campagnStats feeds a campaign statistics channel with items
+//
+// while hasMore is true and all items have been consumed in the channel
+// a new request is fired using the since parameter of the response, to
+// retrieve new items
+//
+// when HasMore is false, we close the channel
+func campaignStats(csc chan CampaignStat, resp *CampaignStatsResponse, cs *CampaignStats, campaignID string) {
+	for {
+		for _, item := range resp.Items {
+			csc <- item
+		}
+		if !resp.HasMore {
+			close(csc)
+			return
+		}
+		params := map[string]string{
+			"since": strconv.FormatInt(resp.LastTimestamp, 10),
+		}
+
+		resp, err := cs.Get(campaignID, params)
+
+		if err != nil {
+			panic(err)
+		}
+
+		go campaignStats(csc, resp, cs, campaignID)
 
 		return
 	}

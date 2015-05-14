@@ -50,3 +50,11 @@ type CampaignResult struct {
 	URL        string                 `json:"url"`
 	TotalTime  float64                `json:"time"`
 }
+
+// CampaignStat represents a campaign statistics item
+type CampaignStat struct {
+	ID         string `json:"id"`
+	Completed  int    `json:"completed"`
+	Conversion int    `json:"conversion"`
+	Views      int    `json:"views"`
+}
