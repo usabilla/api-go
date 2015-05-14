@@ -2,9 +2,11 @@
 
 Gobilla is a Go client for Usabilla API.
 
+Supported version 1.1.0
+
 # Getting Started
 
-After installing Go and setting up your [GOPATH](http://golang.org/doc/code.html#GOPATH), create a main.go file.
+After installing Go and setting up your [GOPATH](http://golang.org/doc/code.html#GOPATH), create a `main.go` file.
 
     package main
 
@@ -34,8 +36,8 @@ Then run the file using the key and secret as command line arguments:
 
     go run main.go key secret
 
-You will get feedback items for each button.
+You will get all feedback items for each button.
 
-You can find a more detailed example [here](example/main.go), which you can run form the root directory of the project as
+The project includes a more detailed [example](example/main.go), which you can run form the root directory of the project as
 
     go run example/main.go key secret
