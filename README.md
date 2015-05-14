@@ -9,33 +9,33 @@ Gobilla is a Go client for [Usabilla API](https://usabilla.com/api).
 After installing Go and setting up your [GOPATH](http://golang.org/doc/code.html#GOPATH), create a `main.go` file
 
 ```go
-    package main
+package main
 
-    import (
-        "fmt"
-        "os"
+import (
+    "fmt"
+    "os"
 
-        "github.com/usabilla/gobilla"
-    )
+    "github.com/usabilla/gobilla"
+)
 
-    func main() {
-        args := os.Args[1:]
+func main() {
+    args := os.Args[1:]
 
-        // Pass the key and secret from command line arguments
-        gb := gobilla.New(args[0], args[1])
-        
-        b := gb.Buttons()
+    // Pass the key and secret from command line arguments
+    gb := gobilla.New(args[0], args[1])
+    
+    b := gb.Buttons()
 
-        // Get the first ten buttons
-        params := map[string]string{"limit": "10"}
-        buttons, _ := b.Get(params)
-        
-        // Print all feedback items for each button
-        for _, button := range buttons.Items {
-            feedback, _ := b.Feedback().Get(button.ID, nil)
-            fmt.Printf("Feedback for button: %s\n%v\n", button.ID, feedback.Items)
-        }
+    // Get the first ten buttons
+    params := map[string]string{"limit": "10"}
+    buttons, _ := b.Get(params)
+    
+    // Print all feedback items for each button
+    for _, button := range buttons.Items {
+        feedback, _ := b.Feedback().Get(button.ID, nil)
+        fmt.Printf("Feedback for button: %s\n%v\n", button.ID, feedback.Items)
     }
+}
 ```
 
 Then install Gobilla package
