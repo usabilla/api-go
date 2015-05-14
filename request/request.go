@@ -28,7 +28,7 @@ type Request struct {
 // Get issues a GET request to the API and uses auth to set the authorization header.
 func (r *Request) Get() ([]byte, error) {
 	// Request also escapes whatever URL is passed here as string
-	request, err := http.NewRequest(r.Method, r.url(), nil)
+	request, err := http.NewRequest(r.Method, r.URL(), nil)
 	if err != nil {
 		panic(err)
 	}
@@ -39,7 +39,7 @@ func (r *Request) Get() ([]byte, error) {
 	request.Header.Add("date", rfcdate)
 	request.Header.Add("host", host)
 
-	query := r.query()
+	query := r.Query()
 
 	request.URL.RawQuery = query
 
@@ -64,11 +64,15 @@ func (r *Request) Get() ([]byte, error) {
 	return body, nil
 }
 
-func (r *Request) url() string {
+// URL returns the request URL using the scheme, host, and the additional
+// resource URI
+func (r *Request) URL() string {
 	return fmt.Sprintf("%s://%s%s", scheme, host, r.URI)
 }
 
-func (r *Request) query() string {
+// Query returns URL encoded query parameters using the params map that
+// is passed in the Request
+func (r *Request) Query() string {
 	v := url.Values{}
 	for key, value := range r.Params {
 		v.Set(key, value)
