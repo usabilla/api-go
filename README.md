@@ -8,6 +8,7 @@ Gobilla is a Go client for [Usabilla API](https://usabilla.com/api).
 
 After installing Go and setting up your [GOPATH](http://golang.org/doc/code.html#GOPATH), create a `main.go` file
 
+```go
     package main
 
     import (
@@ -35,6 +36,7 @@ After installing Go and setting up your [GOPATH](http://golang.org/doc/code.html
             fmt.Printf("Feedback for button: %s\n%v\n", button.ID, feedback.Items)
         }
     }
+```
 
 Then install Gobilla package
 
