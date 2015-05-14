@@ -15,7 +15,7 @@ func New(key, secret string) *Gobilla {
 	}
 }
 
-// Buttons encapsulate the button resource.
+// Buttons encapsulates the button resource.
 func (gb *Gobilla) Buttons() Buttons {
 	return Buttons{
 		resource: resource{
@@ -24,9 +24,18 @@ func (gb *Gobilla) Buttons() Buttons {
 	}
 }
 
-// Campaigns encapsulate the campaign resource.
+// Campaigns encapsulates the campaign resource.
 func (gb *Gobilla) Campaigns() Campaigns {
 	return Campaigns{
+		resource: resource{
+			auth: gb.auth,
+		},
+	}
+}
+
+// Apps encapsulates the app resource.
+func (gb *Gobilla) Apps() Apps {
+	return Apps{
 		resource: resource{
 			auth: gb.auth,
 		},
