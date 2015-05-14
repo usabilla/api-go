@@ -1,4 +1,4 @@
-package gobilla
+package auth
 
 import (
 	"testing"

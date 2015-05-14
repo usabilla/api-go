@@ -1,4 +1,4 @@
-package gobilla
+package request
 
 import (
 	"fmt"
@@ -6,6 +6,9 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/usabilla/gobilla/auth"
+	"github.com/usabilla/gobilla/date"
 )
 
 const (
@@ -14,25 +17,24 @@ const (
 )
 
 // Request is a request that the client makes to the API.
-// You can provide a custom http.Client to change the way the client works and handles requests.
 type Request struct {
-	auth   auth
-	uri    string
-	method string
-	params map[string]string
-	client http.Client
+	Auth   auth.Auth
+	URI    string
+	Method string
+	Params map[string]string
+	Client http.Client
 }
 
 // Get issues a GET request to the API and uses auth to set the authorization header.
 func (r *Request) Get() ([]byte, error) {
 	// Request also escapes whatever URL is passed here as string
-	request, err := http.NewRequest(r.method, r.url(), nil)
+	request, err := http.NewRequest(r.Method, r.url(), nil)
 	if err != nil {
 		panic(err)
 	}
 
 	now := time.Now()
-	rfcdate := getRFC1123GMT(now)
+	rfcdate := date.GetRFC1123GMT(now)
 
 	request.Header.Add("date", rfcdate)
 	request.Header.Add("host", host)
@@ -41,14 +43,14 @@ func (r *Request) Get() ([]byte, error) {
 
 	request.URL.RawQuery = query
 
-	shortDate := getShortDate(now)
-	shortDateTime := getShortDateTime(now)
+	shortDate := date.GetShortDate(now)
+	shortDateTime := date.GetShortDateTime(now)
 
-	authHeader := r.auth.header(r.method, r.uri, query, rfcdate, host, shortDate, shortDateTime)
+	authHeader := r.Auth.Header(r.Method, r.URI, query, rfcdate, host, shortDate, shortDateTime)
 
 	request.Header.Add("authorization", authHeader)
 
-	resp, err := r.client.Do(request)
+	resp, err := r.Client.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -63,12 +65,12 @@ func (r *Request) Get() ([]byte, error) {
 }
 
 func (r *Request) url() string {
-	return fmt.Sprintf("%s://%s%s", scheme, host, r.uri)
+	return fmt.Sprintf("%s://%s%s", scheme, host, r.URI)
 }
 
 func (r *Request) query() string {
 	v := url.Values{}
-	for key, value := range r.params {
+	for key, value := range r.Params {
 		v.Set(key, value)
 	}
 	return v.Encode()
