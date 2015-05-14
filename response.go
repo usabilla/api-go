@@ -15,7 +15,8 @@ type ButtonResponse struct {
 	Items []Button `json:"items"`
 }
 
-// NewButtonResponse creates a button response and unmarshals json API button response to Go struct.
+// NewButtonResponse creates a button response and unmarshals json API
+// button response to Go struct.
 func NewButtonResponse(data []byte) (*ButtonResponse, error) {
 	response := &ButtonResponse{}
 
@@ -33,7 +34,8 @@ type FeedbackResponse struct {
 	Items []FeedbackItem `json:"items"`
 }
 
-// NewFeedbackResponse creates a feedback response and unmarshals json API feeddback items response to Go struct.
+// NewFeedbackResponse creates a feedback response and unmarshals json API
+// feeddback items response to Go struct.
 func NewFeedbackResponse(data []byte) (*FeedbackResponse, error) {
 	response := &FeedbackResponse{}
 
@@ -51,7 +53,8 @@ type CampaignResponse struct {
 	Items []Campaign `json:"items"`
 }
 
-// NewCampaignResponse creates a campaign response and unmarshals json API campaign response to Go struct.
+// NewCampaignResponse creates a campaign response and unmarshals json API
+// campaign response to Go struct.
 func NewCampaignResponse(data []byte) (*CampaignResponse, error) {
 	response := &CampaignResponse{}
 
@@ -107,7 +110,8 @@ type AppResponse struct {
 	Items []App `json:"items"`
 }
 
-// NewAppResponse creates an app response and unmarshals json API app response to Go struct.
+// NewAppResponse creates an app response and unmarshals json API app
+// response to Go struct.
 func NewAppResponse(data []byte) (*AppResponse, error) {
 	response := &AppResponse{}
 
@@ -125,10 +129,29 @@ type AppFeedbackResponse struct {
 	Items []AppFeedbackItem `json:"items"`
 }
 
-// NewAppFeedbackResponse creates an app feedback response and unmarshals json API app
-// feeddback items response to Go struct.
+// NewAppFeedbackResponse creates an app feedback response and unmarshals json
+// API app feeddback items response to Go struct.
 func NewAppFeedbackResponse(data []byte) (*AppFeedbackResponse, error) {
 	response := &AppFeedbackResponse{}
+
+	err := json.Unmarshal(data, &response)
+	if err != nil {
+		return response, err
+	}
+
+	return response, nil
+}
+
+// EmailButtonResponse is a response that contains email button data.
+type EmailButtonResponse struct {
+	Response
+	Items []EmailButton `json:"items"`
+}
+
+// NewEmailButtonResponse creates an email button response and unmarshals
+// json API email button response to Go struct.
+func NewEmailButtonResponse(data []byte) (*EmailButtonResponse, error) {
+	response := &EmailButtonResponse{}
 
 	err := json.Unmarshal(data, &response)
 	if err != nil {

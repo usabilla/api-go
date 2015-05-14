@@ -17,7 +17,7 @@ type FeedbackItem struct {
 	Date      time.Time         `json:"date"`
 	Custom    map[string]string `json:"custom"`
 	Email     string            `json:"email"`
-	Image     string            `json:"image"`
+	Image     string            `json:"image,omitempty"`
 	Labels    []string          `json:"labels"`
 	NPS       int               `json:"nps"`
 	PublicURL string            `json:"publicUrl"`
@@ -93,4 +93,14 @@ type AppFeedbackItem struct {
 	Language     string                 `json:"language"`
 	Orientation  string                 `json:"orientation"`
 	BatteryLevel float32                `json:"batteryLevel"`
+}
+
+// EmailButton represents an email button item.
+type EmailButton struct {
+	ID        string                   `json:"id"`
+	Date      string                   `json:"date"`
+	Name      string                   `json:"name"`
+	IntroText string                   `json:"introText"`
+	Locale    string                   `json:"locale"`
+	Groups    []map[string]interface{} `json:"groups"`
 }

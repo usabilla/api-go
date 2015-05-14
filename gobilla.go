@@ -41,3 +41,12 @@ func (gb *Gobilla) Apps() Apps {
 		},
 	}
 }
+
+// EmailButtons encapsulates the email button resource.
+func (gb *Gobilla) EmailButtons() EmailButtons {
+	return EmailButtons{
+		resource: resource{
+			auth: gb.auth,
+		},
+	}
+}

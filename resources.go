@@ -12,6 +12,9 @@ const (
 	campaignURI = websitesURI + "/campaign"
 
 	appsURI = "/live/apps"
+
+	emailURI       = "/live/email"
+	emailButtonURI = emailURI + "/button"
 )
 
 var (
@@ -33,7 +36,8 @@ type Buttons struct {
 // taking into account the specified query params.
 //
 // Accepted query params are:
-// - limit string
+// - limit int
+// - since string (Time stamp)
 func (b *Buttons) Get(params map[string]string) (*ButtonResponse, error) {
 	request := Request{
 		method: "GET",
@@ -68,6 +72,7 @@ type FeedbackItems struct {
 // for a specific button, taking into account the provided query params.
 //
 // Accepted query params are:
+// - limit int
 // - since string (Time stamp)
 func (f *FeedbackItems) Get(buttonID string, params map[string]string) (*FeedbackResponse, error) {
 	uri := fmt.Sprintf(feedbackURI, buttonURI, buttonID)
@@ -144,7 +149,7 @@ type Campaigns struct {
 // taking into account the provided query params.
 //
 // Accepted query params are:
-// - limit string
+// - limit int
 // - since string (Time stamp)
 func (c *Campaigns) Get(params map[string]string) (*CampaignResponse, error) {
 	request := Request{
@@ -444,5 +449,45 @@ func appItems(afic chan AppFeedbackItem, resp *AppFeedbackResponse, af *AppFeedb
 		go appItems(afic, resp, af, appID)
 
 		return
+	}
+}
+
+// EmailButtons represents the email button resource of Usabilla API.
+type EmailButtons struct {
+	resource
+}
+
+// Get function of EmailButtons resource returns all the email buttons
+// taking into account the specified query params.
+//
+// Accepted query params are:
+// - limit int
+// - since string (Time stamp)
+func (eb *EmailButtons) Get(params map[string]string) (*EmailButtonResponse, error) {
+	request := Request{
+		method: "GET",
+		auth:   eb.auth,
+		uri:    emailButtonURI,
+		params: params,
+	}
+
+	data, err := request.Get()
+	if err != nil {
+		panic(err)
+	}
+
+	return NewEmailButtonResponse(data)
+}
+
+// Feedback encapsulates the email feedback item resource.
+//
+// We use the FeedbackItem response as it is the same with the feedback item
+// response from websites, only difference is that image is contained
+// in the website feedback item response, but it is omitted for the email one
+func (eb *EmailButtons) Feedback() *FeedbackItems {
+	return &FeedbackItems{
+		resource: resource{
+			auth: eb.auth,
+		},
 	}
 }
