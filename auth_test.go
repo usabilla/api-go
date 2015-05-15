@@ -1,4 +1,4 @@
-package auth
+package gobilla
 
 import (
 	"testing"
@@ -18,10 +18,10 @@ var testData = map[string]string{
 	"secret":    "secret",
 }
 
-func fakeAuth() *Auth {
-	return &Auth{
-		Key:    testData["key"],
-		Secret: testData["secret"],
+func fakeAuth() *auth {
+	return &auth{
+		key:    testData["key"],
+		secret: testData["secret"],
 	}
 }
 
@@ -86,7 +86,7 @@ func Test_Signature(t *testing.T) {
 func Test_Header(t *testing.T) {
 	spec := internal.Spec(t)
 	auth := fakeAuth()
-	header := auth.Header(testData["method"], testData["uri"], testData["query"], testData["rfcdate"], testData["host"], testData["shortDate"], testData["shortDateTime"])
+	header := auth.header(testData["method"], testData["uri"], testData["query"], testData["rfcdate"], testData["host"], testData["shortDate"], testData["shortDateTime"])
 	expected := "USBL1-HMAC-SHA256 Credential=key/20150223/usbl1_request, SignedHeaders=date;host, Signature=a45df8012058d07b89e12cef34754029d2edcc80f930dca586e395b79ef2baf3"
 	spec.Expect(header).ToEqual(expected)
 }

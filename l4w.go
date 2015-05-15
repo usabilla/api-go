@@ -1,12 +1,163 @@
-package l4w
+package gobilla
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
-
-	"github.com/usabilla/gobilla/request"
-	"github.com/usabilla/gobilla/resource"
+	"time"
 )
+
+// Button represents a button item.
+type Button struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+// FeedbackItem represents a feedback item.
+type FeedbackItem struct {
+	ID        string            `json:"id"`
+	UserAgent string            `json:"userAgent"`
+	Comment   string            `json:"comment"`
+	Location  string            `json:"location"`
+	Date      time.Time         `json:"date"`
+	Custom    map[string]string `json:"custom"`
+	Email     string            `json:"email"`
+	Image     string            `json:"image,omitempty"`
+	Labels    []string          `json:"labels"`
+	NPS       int               `json:"nps"`
+	PublicURL string            `json:"publicUrl"`
+	Rating    int               `json:"rating"`
+	ButtonID  string            `json:"buttonId"`
+	Tags      []string          `json:"tags"`
+	URL       string            `json:"url"`
+}
+
+// Campaign represents a campaign item.
+type Campaign struct {
+	ID          string    `json:"id"`
+	Date        time.Time `json:"date"`
+	ButtonID    string    `json:"buttonId"`
+	AnalyticsID string    `json:"analyticsId"`
+	Status      string    `json:"status"`
+	Name        string    `json:"name"`
+	Type        string    `json:"type"`
+}
+
+// CampaignResult represents a campaign result item.
+type CampaignResult struct {
+	ID         string                 `json:"id"`
+	UserAgent  string                 `json:"userAgent"`
+	Location   string                 `json:"location"`
+	Date       time.Time              `json:"date"`
+	CampaignID string                 `json:"campaignId"`
+	Custom     map[string]string      `json:"custom"`
+	Data       map[string]interface{} `json:"data"`
+	URL        string                 `json:"url"`
+	Time       float64                `json:"time"`
+}
+
+// CampaignStat represents a campaign statistics item
+type CampaignStat struct {
+	ID         string `json:"id"`
+	Completed  int    `json:"completed"`
+	Conversion int    `json:"conversion"`
+	Views      int    `json:"views"`
+}
+
+// ButtonResponse is a response that contains button data.
+type ButtonResponse struct {
+	Response
+	Items []Button `json:"items"`
+}
+
+// NewButtonResponse creates a button response and unmarshals json API
+// button response to Go struct.
+func NewButtonResponse(data []byte) (*ButtonResponse, error) {
+	response := &ButtonResponse{}
+
+	err := json.Unmarshal(data, &response)
+	if err != nil {
+		return response, err
+	}
+
+	return response, nil
+}
+
+// FeedbackResponse is a response that contains feedback item data.
+type FeedbackResponse struct {
+	Response
+	Items []FeedbackItem `json:"items"`
+}
+
+// NewFeedbackResponse creates a feedback response and unmarshals json API
+// feeddback items response to Go struct.
+func NewFeedbackResponse(data []byte) (*FeedbackResponse, error) {
+	response := &FeedbackResponse{}
+
+	err := json.Unmarshal(data, &response)
+	if err != nil {
+		return response, err
+	}
+
+	return response, nil
+}
+
+// CampaignResponse is a response that contains campaign data.
+type CampaignResponse struct {
+	Response
+	Items []Campaign `json:"items"`
+}
+
+// NewCampaignResponse creates a campaign response and unmarshals json API
+// campaign response to Go struct.
+func NewCampaignResponse(data []byte) (*CampaignResponse, error) {
+	response := &CampaignResponse{}
+
+	err := json.Unmarshal(data, &response)
+	if err != nil {
+		return response, err
+	}
+
+	return response, nil
+}
+
+// CampaignResultResponse is a response that contains campaign result data.
+type CampaignResultResponse struct {
+	Response
+	Items []CampaignResult `json:"items"`
+}
+
+// NewCampaignResultResponse creates a new campaign result response and unmarshals json API
+// campaign results response to Go struct.
+func NewCampaignResultResponse(data []byte) (*CampaignResultResponse, error) {
+	response := &CampaignResultResponse{}
+
+	err := json.Unmarshal(data, &response)
+	if err != nil {
+		return response, err
+	}
+
+	return response, nil
+}
+
+// CampaignStatsResponse is a response that contains campaign statistics data.
+type CampaignStatsResponse struct {
+	Response
+	Items []CampaignStat `json:"items"`
+}
+
+// NewCampaignStatsResponse creates a new campaign statistics response and unmarshals json API
+// campaign statistics response to Go struct.
+func NewCampaignStatsResponse(data []byte) (*CampaignStatsResponse, error) {
+	response := &CampaignStatsResponse{}
+
+	err := json.Unmarshal(data, &response)
+	if err != nil {
+		return response, err
+	}
+
+	return response, nil
+}
 
 // Canonical URI constants.
 const (
@@ -23,7 +174,7 @@ var (
 
 // Buttons represents the button resource of Usabilla API.
 type Buttons struct {
-	resource.Resource
+	resource
 }
 
 // Get function of Buttons resource returns all the buttons
@@ -33,14 +184,14 @@ type Buttons struct {
 // - limit int
 // - since string (Time stamp)
 func (b *Buttons) Get(params map[string]string) (*ButtonResponse, error) {
-	request := request.Request{
-		Method: "GET",
-		Auth:   b.Auth,
-		URI:    buttonURI,
-		Params: params,
+	request := request{
+		method: "GET",
+		auth:   b.auth,
+		uri:    buttonURI,
+		params: params,
 	}
 
-	data, err := request.Get()
+	data, err := request.get()
 	if err != nil {
 		panic(err)
 	}
@@ -51,15 +202,15 @@ func (b *Buttons) Get(params map[string]string) (*ButtonResponse, error) {
 // Feedback encapsulates the feedback item resource.
 func (b *Buttons) Feedback() *FeedbackItems {
 	return &FeedbackItems{
-		Resource: resource.Resource{
-			Auth: b.Auth,
+		resource: resource{
+			auth: b.auth,
 		},
 	}
 }
 
 // FeedbackItems represents the feedback item subresource of Usabilla API.
 type FeedbackItems struct {
-	resource.Resource
+	resource
 }
 
 // Get function of FeedbackItem resource returns all the feedback items
@@ -71,14 +222,14 @@ type FeedbackItems struct {
 func (f *FeedbackItems) Get(buttonID string, params map[string]string) (*FeedbackResponse, error) {
 	uri := fmt.Sprintf(feedbackURI, buttonID)
 
-	request := &request.Request{
-		Method: "GET",
-		Auth:   f.Auth,
-		URI:    uri,
-		Params: params,
+	request := &request{
+		method: "GET",
+		auth:   f.auth,
+		uri:    uri,
+		params: params,
 	}
 
-	data, err := request.Get()
+	data, err := request.get()
 	if err != nil {
 		panic(err)
 	}
@@ -136,7 +287,7 @@ func items(fic chan FeedbackItem, resp *FeedbackResponse, f *FeedbackItems, butt
 
 // Campaigns represents the campaign resource of Usabilla API.
 type Campaigns struct {
-	resource.Resource
+	resource
 }
 
 // Get function of Campaigns resource returns all the campaigns
@@ -146,14 +297,14 @@ type Campaigns struct {
 // - limit int
 // - since string (Time stamp)
 func (c *Campaigns) Get(params map[string]string) (*CampaignResponse, error) {
-	request := request.Request{
-		Method: "GET",
-		Auth:   c.Auth,
-		URI:    campaignURI,
-		Params: params,
+	request := request{
+		method: "GET",
+		auth:   c.auth,
+		uri:    campaignURI,
+		params: params,
 	}
 
-	data, err := request.Get()
+	data, err := request.get()
 	if err != nil {
 		panic(err)
 	}
@@ -164,15 +315,15 @@ func (c *Campaigns) Get(params map[string]string) (*CampaignResponse, error) {
 // Results encapsulates the campaign results resource.
 func (c *Campaigns) Results() *CampaignResults {
 	return &CampaignResults{
-		Resource: resource.Resource{
-			Auth: c.Auth,
+		resource: resource{
+			auth: c.auth,
 		},
 	}
 }
 
 // CampaignResults represents the campaign result resource of Usabilla API.
 type CampaignResults struct {
-	resource.Resource
+	resource
 }
 
 // Get function of CampaignResults resource returns all the campaign result items
@@ -184,14 +335,14 @@ type CampaignResults struct {
 func (r *CampaignResults) Get(campaignID string, params map[string]string) (*CampaignResultResponse, error) {
 	uri := fmt.Sprintf(campaignResultsURI, campaignID)
 
-	request := request.Request{
-		Method: "GET",
-		Auth:   r.Auth,
-		URI:    uri,
-		Params: params,
+	request := request{
+		method: "GET",
+		auth:   r.auth,
+		uri:    uri,
+		params: params,
 	}
 
-	data, err := request.Get()
+	data, err := request.get()
 	if err != nil {
 		panic(err)
 	}
@@ -250,15 +401,15 @@ func campaignResults(crc chan CampaignResult, resp *CampaignResultResponse, r *C
 // Stats encapsulates the campaign statistics resource.
 func (c *Campaigns) Stats() *CampaignStats {
 	return &CampaignStats{
-		Resource: resource.Resource{
-			Auth: c.Auth,
+		resource: resource{
+			auth: c.auth,
 		},
 	}
 }
 
 // CampaignStats represents the campaign statistics resource of Usabilla API.
 type CampaignStats struct {
-	resource.Resource
+	resource
 }
 
 // Get function of CampaignStats resource returns the campaign statistics
@@ -270,14 +421,14 @@ type CampaignStats struct {
 func (cs *CampaignStats) Get(campaignID string, params map[string]string) (*CampaignStatsResponse, error) {
 	uri := fmt.Sprintf(campaignStatsURI, campaignID)
 
-	request := request.Request{
-		Method: "GET",
-		Auth:   cs.Auth,
-		URI:    uri,
-		Params: params,
+	request := request{
+		method: "GET",
+		auth:   cs.auth,
+		uri:    uri,
+		params: params,
 	}
 
-	data, err := request.Get()
+	data, err := request.get()
 	if err != nil {
 		panic(err)
 	}

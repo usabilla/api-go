@@ -1,4 +1,4 @@
-package response
+package gobilla
 
 // Response contains common data for an API response.
 type Response struct {

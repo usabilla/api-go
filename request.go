@@ -1,4 +1,4 @@
-package request
+package gobilla
 
 import (
 	"fmt"
@@ -6,9 +6,6 @@ import (
 	"net/http"
 	"net/url"
 	"time"
-
-	"github.com/usabilla/gobilla/auth"
-	"github.com/usabilla/gobilla/date"
 )
 
 const (
@@ -17,40 +14,40 @@ const (
 )
 
 // Request is a request that the client makes to the API.
-type Request struct {
-	Auth   auth.Auth
-	URI    string
-	Method string
-	Params map[string]string
-	Client http.Client
+type request struct {
+	auth   auth
+	uri    string
+	method string
+	params map[string]string
+	client http.Client
 }
 
 // Get issues a GET request to the API and uses auth to set the authorization header.
-func (r *Request) Get() ([]byte, error) {
+func (r *request) get() ([]byte, error) {
 	// Request also escapes whatever URL is passed here as string
-	request, err := http.NewRequest(r.Method, r.URL(), nil)
+	request, err := http.NewRequest(r.method, r.url(), nil)
 	if err != nil {
 		panic(err)
 	}
 
 	now := time.Now()
-	rfcdate := date.GetRFC1123GMT(now)
+	rfcdate := getRFC1123GMT(now)
 
 	request.Header.Add("date", rfcdate)
 	request.Header.Add("host", host)
 
-	query := r.Query()
+	query := r.query()
 
 	request.URL.RawQuery = query
 
-	shortDate := date.GetShortDate(now)
-	shortDateTime := date.GetShortDateTime(now)
+	shortDate := getShortDate(now)
+	shortDateTime := getShortDateTime(now)
 
-	authHeader := r.Auth.Header(r.Method, r.URI, query, rfcdate, host, shortDate, shortDateTime)
+	authHeader := r.auth.header(r.method, r.uri, query, rfcdate, host, shortDate, shortDateTime)
 
 	request.Header.Add("authorization", authHeader)
 
-	resp, err := r.Client.Do(request)
+	resp, err := r.client.Do(request)
 	if err != nil {
 		return nil, err
 	}
@@ -66,15 +63,15 @@ func (r *Request) Get() ([]byte, error) {
 
 // URL returns the request URL using the scheme, host, and the additional
 // resource URI
-func (r *Request) URL() string {
-	return fmt.Sprintf("%s://%s%s", scheme, host, r.URI)
+func (r *request) url() string {
+	return fmt.Sprintf("%s://%s%s", scheme, host, r.uri)
 }
 
 // Query returns URL encoded query parameters using the params map that
 // is passed in the Request
-func (r *Request) Query() string {
+func (r *request) query() string {
 	v := url.Values{}
-	for key, value := range r.Params {
+	for key, value := range r.params {
 		v.Set(key, value)
 	}
 	return v.Encode()

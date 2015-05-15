@@ -12,17 +12,18 @@ After installing Go and setting up your [GOPATH](http://golang.org/doc/code.html
 package main
 
 import (
-    "fmt"
     "os"
+    "fmt"
 
     "github.com/usabilla/gobilla"
 )
 
 func main() {
-    args := os.Args[1:]
+    key := os.Getenv("USABILLA_API_KEY")
+    secret := os.Getenv("USABILLA_API_SECRET")
 
-    // Pass the key and secret from command line arguments
-    gb := gobilla.New(args[0], args[1])
+    // Pass the key and secret which should be defined as ENV vars
+    gb := gobilla.New(key, secret)
     
     b := gb.Buttons()
 
@@ -42,12 +43,12 @@ Then install Gobilla package
 
     go get github.com/usabilla/gobilla
 
-Then run the file using your API `key` and `secret` as command line arguments
+Run the file
 
-    go run main.go <your_api_key> <your_api_secret>
+    go run main.go 
 
-You will get all feedback items for each button.
+And you will get all feedback items for each button.
 
-The project includes a more detailed [example](example/main.go), which you can run form the root directory of the project
+The project includes a more detailed [example](example/main.go), which you can run from the root directory of the project
 
-    go run example/main.go <your_api_key> <your_api_secret>
+    go run example/main.go

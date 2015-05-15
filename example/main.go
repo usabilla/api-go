@@ -52,9 +52,10 @@ func buttonsIterator(gb *gobilla.Gobilla) {
 }
 
 func main() {
-	args := os.Args[1:]
+	key := os.Getenv("USABILLA_API_KEY")
+	secret := os.Getenv("USABILLA_API_SECRET")
 
-	gb := gobilla.New(args[0], args[1])
+	gb := gobilla.New(key, secret)
 
 	// uses a simple GET to get all feedback items for all buttons
 	buttons(gb)

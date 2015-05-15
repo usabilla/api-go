@@ -1,4 +1,4 @@
-package auth
+package gobilla
 
 import "fmt"
 
@@ -10,16 +10,16 @@ const (
 
 // Auth holds the key and secret information and provides methods that
 // encapsulate the whole request signing process of the API
-type Auth struct {
-	Key, Secret string
+type auth struct {
+	key, secret string
 }
 
 // Header creates the authorization header.
-func (au *Auth) Header(method, uri, query, rfcdate, host, shortDate, shortDateTime string) string {
+func (au *auth) header(method, uri, query, rfcdate, host, shortDate, shortDateTime string) string {
 	return fmt.Sprintf(
 		"%s Credential=%s/%s, SignedHeaders=%s, Signature=%s",
 		algorithm,
-		au.Key,
+		au.key,
 		au.credentialScope(shortDate),
 		au.signedHeaders(),
 		au.signature(method, uri, query, rfcdate, host, shortDate, shortDateTime),
@@ -27,13 +27,13 @@ func (au *Auth) Header(method, uri, query, rfcdate, host, shortDate, shortDateTi
 }
 
 // Create the credential scope that includes the short date format and termination string.
-func (au *Auth) credentialScope(shortDate string) string {
+func (au *auth) credentialScope(shortDate string) string {
 	return shortDate + "/" + terminator
 }
 
 // Create a signature using the string to sign.
-func (au *Auth) signature(method, uri, query, rfcdate, host, shortDate, shortDateTime string) string {
-	dig := keyedHash([]byte(startor+au.Secret), []byte(shortDate))
+func (au *auth) signature(method, uri, query, rfcdate, host, shortDate, shortDateTime string) string {
+	dig := keyedHash([]byte(startor+au.secret), []byte(shortDate))
 
 	dig = keyedHash(dig, []byte(terminator))
 
@@ -43,22 +43,22 @@ func (au *Auth) signature(method, uri, query, rfcdate, host, shortDate, shortDat
 }
 
 // Return the signed headers.
-func (au *Auth) signedHeaders() string {
+func (au *auth) signedHeaders() string {
 	return "date;host"
 }
 
 // Create a hexademical hash of the payload.
-func (au *Auth) payload(load string) string {
+func (au *auth) payload(load string) string {
 	return hexHash([]byte(load))
 }
 
 // Create a hexademical hash of the canonical request.
-func (au *Auth) hashedCanonicalRequest(method, uri, query, rfcdate, host string) string {
+func (au *auth) hashedCanonicalRequest(method, uri, query, rfcdate, host string) string {
 	return hexHash([]byte(au.canonicalRequest(method, uri, query, rfcdate, host)))
 }
 
 // Create the string to be used for signing.
-func (au *Auth) stringToSign(method, uri, query, rfcdate, host, shortDate, shortDateTime string) string {
+func (au *auth) stringToSign(method, uri, query, rfcdate, host, shortDate, shortDateTime string) string {
 	return fmt.Sprintf(
 		"%s\n%s\n%s\n%s",
 		algorithm,
@@ -69,7 +69,7 @@ func (au *Auth) stringToSign(method, uri, query, rfcdate, host, shortDate, short
 }
 
 // Create a canonical format of the request.
-func (au *Auth) canonicalRequest(method, uri, query, rfcdate, host string) string {
+func (au *auth) canonicalRequest(method, uri, query, rfcdate, host string) string {
 	return fmt.Sprintf(
 		"%s\n%s\n%s\n%s\n%s\n%s",
 		method,
@@ -82,6 +82,6 @@ func (au *Auth) canonicalRequest(method, uri, query, rfcdate, host string) strin
 }
 
 // Create a canonical format of the headers.
-func (au *Auth) canonicalHeaders(rfcdate, host string) string {
+func (au *auth) canonicalHeaders(rfcdate, host string) string {
 	return fmt.Sprintf("date:%s\nhost:%s\n", rfcdate, host)
 }
