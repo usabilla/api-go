@@ -50,6 +50,12 @@ type EmailButtonResponse struct {
 	Items []EmailButton `json:"items"`
 }
 
+// EmailButtons represents the email button resource of Usabilla API.
+type EmailButtons struct {
+	resource
+	client http.Client
+}
+
 // NewEmailButtonResponse creates an email button response and unmarshals
 // json API email button response to Go struct.
 func NewEmailButtonResponse(data []byte) (*EmailButtonResponse, error) {
@@ -63,18 +69,12 @@ func NewEmailButtonResponse(data []byte) (*EmailButtonResponse, error) {
 	return response, nil
 }
 
-// EmailButtons represents the email button resource of Usabilla API.
-type EmailButtons struct {
-	resource
-	client http.Client
-}
-
 // Get function of EmailButtons resource returns all the email buttons
-// taking into account the specified query params.
+// taking into account the specified query parameters.
 //
-// Accepted query params are:
-// - limit int
-// - since string (Time stamp)
+// Valid query parameters are:
+//  limit int
+//  since string (Time stamp)
 func (eb *EmailButtons) Get(params map[string]string) (*EmailButtonResponse, error) {
 	request := request{
 		method: "GET",
@@ -94,9 +94,9 @@ func (eb *EmailButtons) Get(params map[string]string) (*EmailButtonResponse, err
 
 // Feedback encapsulates the email feedback item resource.
 //
-// We use the FeedbackItem response as it is the same with the feedback item
-// response from websites, only difference is that image is contained
-// in the website feedback item response, but it is omitted for the email one
+// We use the FeedbackItems subresource of websites button feedback as it is
+// the same. The only difference being that image is contained
+// in the website feedback item response, but it is omitted for the email one.
 func (eb *EmailButtons) Feedback() *FeedbackItems {
 	return &FeedbackItems{
 		resource: resource{

@@ -107,6 +107,60 @@ type ButtonResponse struct {
 	Items []Button `json:"items"`
 }
 
+// FeedbackResponse is a response that contains feedback item data.
+type FeedbackResponse struct {
+	response
+	Items []FeedbackItem `json:"items"`
+}
+
+// CampaignResponse is a response that contains campaign data.
+type CampaignResponse struct {
+	response
+	Items []Campaign `json:"items"`
+}
+
+// CampaignResultResponse is a response that contains campaign result data.
+type CampaignResultResponse struct {
+	response
+	Items []CampaignResult `json:"items"`
+}
+
+// CampaignStatsResponse is a response that contains campaign statistics data.
+type CampaignStatsResponse struct {
+	response
+	Items []CampaignStat `json:"items"`
+}
+
+// Buttons represents the button resource of Usabilla API.
+type Buttons struct {
+	resource
+	client http.Client
+}
+
+// FeedbackItems represents the feedback item subresource of Usabilla API.
+type FeedbackItems struct {
+	resource
+	client http.Client
+}
+
+// Campaigns represents the campaign resource of Usabilla API.
+type Campaigns struct {
+	resource
+	client http.Client
+}
+
+// CampaignResults represents the campaign result resource of Usabilla API.
+type CampaignResults struct {
+	resource
+	client http.Client
+}
+
+// CampaignStats represents the campaign statistics resource of Usabilla API.
+type CampaignStats struct {
+	resource
+	client http.Client
+}
+
 // NewButtonResponse creates a button response and unmarshals json API
 // button response to Go struct.
 func NewButtonResponse(data []byte) (*ButtonResponse, error) {
@@ -120,14 +174,8 @@ func NewButtonResponse(data []byte) (*ButtonResponse, error) {
 	return response, nil
 }
 
-// FeedbackResponse is a response that contains feedback item data.
-type FeedbackResponse struct {
-	response
-	Items []FeedbackItem `json:"items"`
-}
-
 // NewFeedbackResponse creates a feedback response and unmarshals json API
-// feeddback items response to Go struct.
+// feedback items response to Go struct.
 func NewFeedbackResponse(data []byte) (*FeedbackResponse, error) {
 	response := &FeedbackResponse{}
 
@@ -137,12 +185,6 @@ func NewFeedbackResponse(data []byte) (*FeedbackResponse, error) {
 	}
 
 	return response, nil
-}
-
-// CampaignResponse is a response that contains campaign data.
-type CampaignResponse struct {
-	response
-	Items []Campaign `json:"items"`
 }
 
 // NewCampaignResponse creates a campaign response and unmarshals json API
@@ -158,12 +200,6 @@ func NewCampaignResponse(data []byte) (*CampaignResponse, error) {
 	return response, nil
 }
 
-// CampaignResultResponse is a response that contains campaign result data.
-type CampaignResultResponse struct {
-	response
-	Items []CampaignResult `json:"items"`
-}
-
 // NewCampaignResultResponse creates a new campaign result response and unmarshals json API
 // campaign results response to Go struct.
 func NewCampaignResultResponse(data []byte) (*CampaignResultResponse, error) {
@@ -175,12 +211,6 @@ func NewCampaignResultResponse(data []byte) (*CampaignResultResponse, error) {
 	}
 
 	return response, nil
-}
-
-// CampaignStatsResponse is a response that contains campaign statistics data.
-type CampaignStatsResponse struct {
-	response
-	Items []CampaignStat `json:"items"`
 }
 
 // NewCampaignStatsResponse creates a new campaign statistics response and unmarshals json API
@@ -196,16 +226,10 @@ func NewCampaignStatsResponse(data []byte) (*CampaignStatsResponse, error) {
 	return response, nil
 }
 
-// Buttons represents the button resource of Usabilla API.
-type Buttons struct {
-	resource
-	client http.Client
-}
-
 // Get function of Buttons resource returns all the buttons
-// taking into account the specified query params.
+// taking into account the specified query parameters.
 //
-// Accepted query params are:
+// Valid query parameters are:
 //  limit int
 //  since string (Time stamp)
 func (b *Buttons) Get(params map[string]string) (*ButtonResponse, error) {
@@ -234,16 +258,10 @@ func (b *Buttons) Feedback() *FeedbackItems {
 	}
 }
 
-// FeedbackItems represents the feedback item subresource of Usabilla API.
-type FeedbackItems struct {
-	resource
-	client http.Client
-}
-
 // Get function of FeedbackItem resource returns all the feedback items
-// for a specific button, taking into account the provided query params.
+// for a specific button, taking into account the provided query parameters.
 //
-// Accepted query params are:
+// Valid query parameters are:
 //  limit int
 //  since string (Time stamp)
 func (f *FeedbackItems) Get(buttonID string, params map[string]string) (*FeedbackResponse, error) {
@@ -313,16 +331,10 @@ func items(fic chan FeedbackItem, resp *FeedbackResponse, f *FeedbackItems, butt
 	}
 }
 
-// Campaigns represents the campaign resource of Usabilla API.
-type Campaigns struct {
-	resource
-	client http.Client
-}
-
 // Get function of Campaigns resource returns all the campaigns
-// taking into account the provided query params.
+// taking into account the provided query parameters.
 //
-// Accepted query params are:
+// Valid query parameters are:
 //  limit int
 //  since string (Time stamp)
 func (c *Campaigns) Get(params map[string]string) (*CampaignResponse, error) {
@@ -351,16 +363,10 @@ func (c *Campaigns) Results() *CampaignResults {
 	}
 }
 
-// CampaignResults represents the campaign result resource of Usabilla API.
-type CampaignResults struct {
-	resource
-	client http.Client
-}
-
 // Get function of CampaignResults resource returns all the campaign result items
-// for a specific campaign, taking into account the provided query params.
+// for a specific campaign, taking into account the provided query parameters.
 //
-// Accepted query params are:
+// Valid query params are:
 //  limit int
 //  since string (Time stamp)
 func (r *CampaignResults) Get(campaignID string, params map[string]string) (*CampaignResultResponse, error) {
@@ -439,16 +445,10 @@ func (c *Campaigns) Stats() *CampaignStats {
 	}
 }
 
-// CampaignStats represents the campaign statistics resource of Usabilla API.
-type CampaignStats struct {
-	resource
-	client http.Client
-}
-
 // Get function of CampaignStats resource returns the campaign statistics
-// for a specific campaign, taking into account the provided query params.
+// for a specific campaign, taking into account the provided query parameters.
 //
-// Accepted query params are:
+// Valid query parameters are:
 //  limit int
 //  since string (Time stamp)
 func (cs *CampaignStats) Get(campaignID string, params map[string]string) (*CampaignStatsResponse, error) {
@@ -471,7 +471,7 @@ func (cs *CampaignStats) Get(campaignID string, params map[string]string) (*Camp
 }
 
 // Iterate uses a CampaignStat channel which transparently uses the HasMore field to fire
-// a new api request once all stats items have been consumed on the channel
+// a new api request once all stats items have been consumed on the channel.
 func (cs *CampaignStats) Iterate(campaignID string, params map[string]string) chan CampaignStat {
 	resp, err := cs.Get(campaignID, params)
 

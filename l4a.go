@@ -81,10 +81,28 @@ type Apps struct {
 	client http.Client
 }
 
+// AppFeedbackItems represents the apps feedback item subresource of Usabilla API.
+type AppFeedbackItems struct {
+	resource
+	client http.Client
+}
+
+// AppResponse is a response that contains app data.
+type AppResponse struct {
+	response
+	Items []App `json:"items"`
+}
+
+// AppFeedbackResponse is a response that contains app feedback item data.
+type AppFeedbackResponse struct {
+	response
+	Items []AppFeedbackItem `json:"items"`
+}
+
 // Get function of Apps resource returns all apps
-// taking into account the specified query params.
+// taking into account the specified query parameters.
 //
-// Accepted query params are:
+// Valid query parameters are:
 //  limit int
 //  since string (Time stamp)
 func (a *Apps) Get(params map[string]string) (*AppResponse, error) {
@@ -110,19 +128,14 @@ func (a *Apps) Feedback() *AppFeedbackItems {
 		resource: resource{
 			auth: a.auth,
 		},
+		client: a.client,
 	}
 }
 
-// AppFeedbackItems represents the apps feedback item subresource of Usabilla API.
-type AppFeedbackItems struct {
-	resource
-	client http.Client
-}
-
 // Get function of AppFeedbackItem resource returns all the feedback items
-// for a specific app, taking into account the provided query params.
+// for a specific app, taking into account the provided query parameters.
 //
-// Accepted query params are:
+// Valid query parameters are:
 //  limit int
 //  since string (Time stamp)
 func (af *AppFeedbackItems) Get(appID string, params map[string]string) (*AppFeedbackResponse, error) {
@@ -192,12 +205,6 @@ func appItems(afic chan AppFeedbackItem, resp *AppFeedbackResponse, af *AppFeedb
 	}
 }
 
-// AppResponse is a response that contains app data.
-type AppResponse struct {
-	response
-	Items []App `json:"items"`
-}
-
 // NewAppResponse creates an app response and unmarshals json API app
 // response to Go struct.
 func newAppResponse(data []byte) (*AppResponse, error) {
@@ -209,12 +216,6 @@ func newAppResponse(data []byte) (*AppResponse, error) {
 	}
 
 	return response, nil
-}
-
-// AppFeedbackResponse is a response that contains app feedback item data.
-type AppFeedbackResponse struct {
-	response
-	Items []AppFeedbackItem `json:"items"`
 }
 
 // NewAppFeedbackResponse creates an app feedback response and unmarshals json

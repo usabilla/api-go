@@ -22,18 +22,22 @@ IN THE SOFTWARE.
 */
 
 // Package gobilla provides a wrapper for Usabilla Public API.
+//
+// https://usabilla.com/api
 package gobilla
 
 import "net/http"
 
 // Gobilla is the client that exposes all the resources of the Usabilla API.
-// You can provide a custom http client to handler requests in a specific way.
+// You can provide a custom http client to change the way the client works.
 type Gobilla struct {
 	auth   auth
 	Client http.Client
 }
 
 // New creates a new Gobilla instance and sets the auth with key and secret.
+// Client is the default http client. To change the way the client works
+// provide a custom http client.
 func New(key, secret string, client http.Client) *Gobilla {
 	return &Gobilla{
 		auth: auth{
