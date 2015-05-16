@@ -1,17 +1,46 @@
+/*
+Copyright (c) 2015 Usabilla
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish, dis-
+tribute, sublicense, and/or sell copies of the Software, and to permit
+persons to whom the Software is furnished to do so, subject to the fol-
+lowing conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
+ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE.
+*/
+
+// Package gobilla provides a wrapper for Usabilla Public API.
 package gobilla
 
+import "net/http"
+
 // Gobilla is the client that exposes all the resources of the Usabilla API.
+// You can provide a custom http client to handler requests in a specific way.
 type Gobilla struct {
-	auth auth
+	auth   auth
+	Client http.Client
 }
 
 // New creates a new Gobilla instance and sets the auth with key and secret.
-func New(key, secret string) *Gobilla {
+func New(key, secret string, client http.Client) *Gobilla {
 	return &Gobilla{
 		auth: auth{
 			key:    key,
 			secret: secret,
 		},
+		Client: client,
 	}
 }
 
@@ -21,6 +50,7 @@ func (gb *Gobilla) Buttons() *Buttons {
 		resource: resource{
 			auth: gb.auth,
 		},
+		client: gb.Client,
 	}
 }
 
@@ -30,6 +60,7 @@ func (gb *Gobilla) Campaigns() *Campaigns {
 		resource: resource{
 			auth: gb.auth,
 		},
+		client: gb.Client,
 	}
 }
 
@@ -39,6 +70,7 @@ func (gb *Gobilla) Apps() *Apps {
 		resource: resource{
 			auth: gb.auth,
 		},
+		client: gb.Client,
 	}
 }
 
@@ -48,5 +80,6 @@ func (gb *Gobilla) EmailButtons() *EmailButtons {
 		resource: resource{
 			auth: gb.auth,
 		},
+		client: gb.Client,
 	}
 }

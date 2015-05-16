@@ -57,11 +57,11 @@ func main() {
 
 	gb := gobilla.New(key, secret)
 
-	// uses a simple GET to get all feedback items for all buttons
+	// Uses a simple GET to get all feedback items for all buttons.
 	buttons(gb)
 
-	// uses a channel of feedback items, once all items have been
+	// Uses a channel of feedback items, and once all items have been
 	// consumed and the response HasMore then it fires a new request
-	// for all feedback items for all buttons
+	// for all feedback items for all buttons.
 	buttonsIterator(gb)
 }

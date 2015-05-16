@@ -1,8 +1,32 @@
+/*
+Copyright (c) 2015 Usabilla
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish, dis-
+tribute, sublicense, and/or sell copies of the Software, and to permit
+persons to whom the Software is furnished to do so, subject to the fol-
+lowing conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABIL-
+ITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT
+SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE.
+*/
+
 package gobilla
 
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"strconv"
 )
 
@@ -54,20 +78,22 @@ type AppFeedbackItem struct {
 // Apps represents the app resource of Usabilla API.
 type Apps struct {
 	resource
+	client http.Client
 }
 
 // Get function of Apps resource returns all apps
 // taking into account the specified query params.
 //
 // Accepted query params are:
-// - limit int
-// - since string (Time stamp)
+//  limit int
+//  since string (Time stamp)
 func (a *Apps) Get(params map[string]string) (*AppResponse, error) {
 	request := request{
 		method: "GET",
 		auth:   a.auth,
 		uri:    appsURI,
 		params: params,
+		client: a.client,
 	}
 
 	data, err := request.get()
@@ -75,7 +101,7 @@ func (a *Apps) Get(params map[string]string) (*AppResponse, error) {
 		panic(err)
 	}
 
-	return NewAppResponse(data)
+	return newAppResponse(data)
 }
 
 // Feedback encapsulates the app feedback item resource.
@@ -90,6 +116,7 @@ func (a *Apps) Feedback() *AppFeedbackItems {
 // AppFeedbackItems represents the apps feedback item subresource of Usabilla API.
 type AppFeedbackItems struct {
 	resource
+	client http.Client
 }
 
 // Get function of AppFeedbackItem resource returns all the feedback items
@@ -106,6 +133,7 @@ func (af *AppFeedbackItems) Get(appID string, params map[string]string) (*AppFee
 		auth:   af.auth,
 		uri:    uri,
 		params: params,
+		client: af.client,
 	}
 
 	data, err := request.get()
@@ -113,11 +141,11 @@ func (af *AppFeedbackItems) Get(appID string, params map[string]string) (*AppFee
 		panic(err)
 	}
 
-	return NewAppFeedbackResponse(data)
+	return newAppFeedbackResponse(data)
 }
 
 // Iterate uses an AppFeedbackItem channel which transparently uses the HasMore field to fire
-// a new api request once all items have been consumed on the channel
+// a new api request once all items have been consumed on the channel.
 func (af *AppFeedbackItems) Iterate(appID string, params map[string]string) chan AppFeedbackItem {
 	resp, err := af.Get(appID, params)
 
@@ -138,7 +166,7 @@ func (af *AppFeedbackItems) Iterate(appID string, params map[string]string) chan
 // a new request is fired using the since parameter of the response, to
 // retrieve new items.
 //
-// When HasMore is false, we close the channel
+// When HasMore is false, we close the channel.
 func appItems(afic chan AppFeedbackItem, resp *AppFeedbackResponse, af *AppFeedbackItems, appID string) {
 	for {
 		for _, item := range resp.Items {
@@ -166,13 +194,13 @@ func appItems(afic chan AppFeedbackItem, resp *AppFeedbackResponse, af *AppFeedb
 
 // AppResponse is a response that contains app data.
 type AppResponse struct {
-	Response
+	response
 	Items []App `json:"items"`
 }
 
 // NewAppResponse creates an app response and unmarshals json API app
 // response to Go struct.
-func NewAppResponse(data []byte) (*AppResponse, error) {
+func newAppResponse(data []byte) (*AppResponse, error) {
 	response := &AppResponse{}
 
 	err := json.Unmarshal(data, &response)
@@ -185,13 +213,13 @@ func NewAppResponse(data []byte) (*AppResponse, error) {
 
 // AppFeedbackResponse is a response that contains app feedback item data.
 type AppFeedbackResponse struct {
-	Response
+	response
 	Items []AppFeedbackItem `json:"items"`
 }
 
 // NewAppFeedbackResponse creates an app feedback response and unmarshals json
 // API app feeddback items response to Go struct.
-func NewAppFeedbackResponse(data []byte) (*AppFeedbackResponse, error) {
+func newAppFeedbackResponse(data []byte) (*AppFeedbackResponse, error) {
 	response := &AppFeedbackResponse{}
 
 	err := json.Unmarshal(data, &response)
