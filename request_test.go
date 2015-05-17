@@ -24,30 +24,82 @@ IN THE SOFTWARE.
 package gobilla
 
 import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"net/url"
+	"reflect"
 	"testing"
 
 	"github.com/usabilla/gobilla/internal"
 )
 
-func mockRequest(method, uri string, params map[string]string) *request {
+func mockRequest(method, uri string, params map[string]string, client *http.Client) *request {
 	return &request{
 		auth:   auth{},
 		uri:    uri,
 		method: method,
 		params: params,
+		client: client,
 	}
+}
+
+func mockServerClient(code int, body string) (*httptest.Server, *request) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(code)
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintln(w, body)
+	}))
+
+	transport := &http.Transport{
+		Proxy: func(req *http.Request) (*url.URL, error) {
+			return url.Parse(server.URL)
+		},
+	}
+
+	httpClient := &http.Client{Transport: transport}
+	request := mockRequest("GET", server.URL, nil, httpClient)
+
+	return server, request
 }
 
 func Test_URL(t *testing.T) {
 	spec := internal.Spec(t)
-	r := mockRequest("GET", "/live/websites/button", nil)
+	r := mockRequest("GET", "/live/websites/button", nil, nil)
 	expected := "http://data.usabilla.com/live/websites/button"
 	spec.Expect(r.url()).ToEqual(expected)
 }
 
 func Test_Query(t *testing.T) {
 	spec := internal.Spec(t)
-	r := mockRequest("GET", "/", map[string]string{"name": "value"})
+	r := mockRequest("GET", "/", map[string]string{"name": "value"}, nil)
 	expected := "name=value"
 	spec.Expect(r.query()).ToEqual(expected)
+}
+
+func Test_Get_Successful(t *testing.T) {
+	server, request := mockServerClient(200, `{"count": 100, "hasMore": true, "lastTimestamp": 1431867114}`)
+	defer server.Close()
+
+	mockResponse := &response{}
+
+	data, err := request.get()
+	if err != nil {
+		fmt.Errorf("%s", err)
+	}
+
+	err = json.Unmarshal(data, &mockResponse)
+	if err != nil {
+		fmt.Errorf("%s", err)
+	}
+
+	expectedResponse := &response{
+		Count:         100,
+		HasMore:       true,
+		LastTimestamp: 1431867114,
+	}
+
+	spec := internal.Spec(t)
+	spec.Expect(reflect.DeepEqual(mockResponse, expectedResponse)).ToEqual(true)
 }
