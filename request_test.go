@@ -45,7 +45,7 @@ func mockRequest(method, uri string, params map[string]string, client *http.Clie
 	}
 }
 
-func mockServerClient(code int, body string) (*httptest.Server, *request) {
+func mockServerClient(code int, method, body string, params map[string]string) (*httptest.Server, *request) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(code)
 		w.Header().Set("Content-Type", "application/json")
@@ -59,7 +59,7 @@ func mockServerClient(code int, body string) (*httptest.Server, *request) {
 	}
 
 	httpClient := &http.Client{Transport: transport}
-	request := mockRequest("GET", server.URL, nil, httpClient)
+	request := mockRequest(method, server.URL, params, httpClient)
 
 	return server, request
 }
@@ -79,7 +79,8 @@ func Test_Query(t *testing.T) {
 }
 
 func Test_Get_Successful(t *testing.T) {
-	server, request := mockServerClient(200, `{"count": 100, "hasMore": true, "lastTimestamp": 1431867114}`)
+	exampleResponse := `{"count": 100, "hasMore": true, "lastTimestamp": 1431867114}`
+	server, request := mockServerClient(200, "GET", exampleResponse, nil)
 	defer server.Close()
 
 	mockResponse := &response{}
