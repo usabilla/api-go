@@ -55,7 +55,9 @@ func main() {
 	key := os.Getenv("USABILLA_API_KEY")
 	secret := os.Getenv("USABILLA_API_SECRET")
 
-	gb := gobilla.New(key, secret)
+	// You can pass a custom http.Client
+	// We pass nil to use the http.DefaultClient
+	gb := gobilla.New(key, secret, nil)
 
 	// Uses a simple GET to get all feedback items for all buttons.
 	buttons(gb)

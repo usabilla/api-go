@@ -134,31 +134,31 @@ type CampaignStatsResponse struct {
 // Buttons represents the button resource of Usabilla API.
 type Buttons struct {
 	resource
-	client http.Client
+	client *http.Client
 }
 
 // FeedbackItems represents the feedback item subresource of Usabilla API.
 type FeedbackItems struct {
 	resource
-	client http.Client
+	client *http.Client
 }
 
 // Campaigns represents the campaign resource of Usabilla API.
 type Campaigns struct {
 	resource
-	client http.Client
+	client *http.Client
 }
 
 // CampaignResults represents the campaign result resource of Usabilla API.
 type CampaignResults struct {
 	resource
-	client http.Client
+	client *http.Client
 }
 
 // CampaignStats represents the campaign statistics resource of Usabilla API.
 type CampaignStats struct {
 	resource
-	client http.Client
+	client *http.Client
 }
 
 // NewButtonResponse creates a button response and unmarshals json API
@@ -255,6 +255,7 @@ func (b *Buttons) Feedback() *FeedbackItems {
 		resource: resource{
 			auth: b.auth,
 		},
+		client: b.client,
 	}
 }
 
@@ -360,6 +361,7 @@ func (c *Campaigns) Results() *CampaignResults {
 		resource: resource{
 			auth: c.auth,
 		},
+		client: c.client,
 	}
 }
 
@@ -442,6 +444,7 @@ func (c *Campaigns) Stats() *CampaignStats {
 		resource: resource{
 			auth: c.auth,
 		},
+		client: c.client,
 	}
 }
 

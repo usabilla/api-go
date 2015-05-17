@@ -53,7 +53,7 @@ type EmailButtonResponse struct {
 // EmailButtons represents the email button resource of Usabilla API.
 type EmailButtons struct {
 	resource
-	client http.Client
+	client *http.Client
 }
 
 // NewEmailButtonResponse creates an email button response and unmarshals
@@ -102,5 +102,6 @@ func (eb *EmailButtons) Feedback() *FeedbackItems {
 		resource: resource{
 			auth: eb.auth,
 		},
+		client: eb.client,
 	}
 }

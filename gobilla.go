@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 */
 
-// Package gobilla provides a wrapper for Usabilla Public API.
+// Package gobilla provides a wrapper around Usabilla Public API.
 //
 // https://usabilla.com/api
 package gobilla
@@ -32,13 +32,17 @@ import "net/http"
 // You can provide a custom http client to change the way the client works.
 type Gobilla struct {
 	auth   auth
-	Client http.Client
+	Client *http.Client
 }
 
 // New creates a new Gobilla instance and sets the auth with key and secret.
 // Client is the default http client. To change the way the client works
-// provide a custom http client.
-func New(key, secret string, client http.Client) *Gobilla {
+// provide a custom http client. Passing nil will use the http.DefaultClient
+func New(key, secret string, customClient *http.Client) *Gobilla {
+	client := http.DefaultClient
+	if customClient != nil {
+		client = customClient
+	}
 	return &Gobilla{
 		auth: auth{
 			key:    key,

@@ -78,13 +78,13 @@ type AppFeedbackItem struct {
 // Apps represents the app resource of Usabilla API.
 type Apps struct {
 	resource
-	client http.Client
+	client *http.Client
 }
 
 // AppFeedbackItems represents the apps feedback item subresource of Usabilla API.
 type AppFeedbackItems struct {
 	resource
-	client http.Client
+	client *http.Client
 }
 
 // AppResponse is a response that contains app data.

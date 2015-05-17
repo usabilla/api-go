@@ -42,13 +42,13 @@ type request struct {
 	uri    string
 	method string
 	params map[string]string
-	client http.Client
+	client *http.Client
 }
 
 // Get issues a GET request to the API and uses auth to set the authorization header.
 func (r *request) get() ([]byte, error) {
 	// Request also escapes whatever URL is passed here as string
-	request, err := http.NewRequest(r.method, r.url(), nil)
+	req, err := http.NewRequest(r.method, r.url(), nil)
 	if err != nil {
 		panic(err)
 	}
@@ -56,21 +56,21 @@ func (r *request) get() ([]byte, error) {
 	now := time.Now()
 	rfcdate := getRFC1123GMT(now)
 
-	request.Header.Add("date", rfcdate)
-	request.Header.Add("host", host)
+	req.Header.Add("date", rfcdate)
+	req.Header.Add("host", host)
 
 	query := r.query()
 
-	request.URL.RawQuery = query
+	req.URL.RawQuery = query
 
 	shortDate := getShortDate(now)
 	shortDateTime := getShortDateTime(now)
 
 	authHeader := r.auth.header(r.method, r.uri, query, rfcdate, host, shortDate, shortDateTime)
 
-	request.Header.Add("authorization", authHeader)
+	req.Header.Add("authorization", authHeader)
 
-	resp, err := r.client.Do(request)
+	resp, err := r.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
