@@ -4,6 +4,8 @@ Gobilla is a Go client for [Usabilla API](https://usabilla.com/api).
 
 [![Build Status](https://travis-ci.org/usabilla/gobilla.svg?branch=master)](https://travis-ci.org/usabilla/gobilla)
 
+[![GoDoc](http://godoc.org/github.com/usabilla/gobilla?status.svg)](http://godoc.org/github.com/usabilla/gobilla)
+
 ## Getting Started
 
 After installing Go and setting up your [GOPATH](http://golang.org/doc/code.html#GOPATH), create a `main.go` file
