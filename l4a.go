@@ -139,7 +139,7 @@ func (a *Apps) Feedback() *AppFeedbackItems {
 //  limit int
 //  since string (Time stamp)
 func (af *AppFeedbackItems) Get(appID string, params map[string]string) (*AppFeedbackResponse, error) {
-	uri := fmt.Sprintf(feedbackURI, appsURI, appID)
+	uri := fmt.Sprintf(appFeedbackURI, appID)
 
 	request := &request{
 		method: "GET",
@@ -199,7 +199,7 @@ func appItems(afic chan AppFeedbackItem, resp *AppFeedbackResponse, af *AppFeedb
 			panic(err)
 		}
 
-		go appItems(afic, resp, af, appID)
+		appItems(afic, resp, af, appID)
 
 		return
 	}

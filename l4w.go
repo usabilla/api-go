@@ -326,7 +326,7 @@ func items(fic chan FeedbackItem, resp *FeedbackResponse, f *FeedbackItems, butt
 			panic(err)
 		}
 
-		go items(fic, resp, f, buttonID)
+		items(fic, resp, f, buttonID)
 
 		return
 	}
@@ -432,7 +432,7 @@ func campaignResults(crc chan CampaignResult, resp *CampaignResultResponse, r *C
 			panic(err)
 		}
 
-		go campaignResults(crc, resp, r, campaignID)
+		campaignResults(crc, resp, r, campaignID)
 
 		return
 	}
@@ -515,7 +515,7 @@ func campaignStats(csc chan CampaignStat, resp *CampaignStatsResponse, cs *Campa
 			panic(err)
 		}
 
-		go campaignStats(csc, resp, cs, campaignID)
+		campaignStats(csc, resp, cs, campaignID)
 
 		return
 	}

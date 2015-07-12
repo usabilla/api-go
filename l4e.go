@@ -94,9 +94,13 @@ func (eb *EmailButtons) Get(params map[string]string) (*EmailButtonResponse, err
 
 // Feedback encapsulates the email feedback item resource.
 //
-// We use the FeedbackItems subresource of websites button feedback as it is
-// the same. The only difference being that image is contained
-// in the website feedback item response, but it is omitted for the email one.
+// We use the FeedbackItems subresource of websites button feedback, as the
+// email feedback items have the same structure for websites . The only difference
+// being that image is contained in the website feedback item response, but it is
+// omitted for the email one.
+//
+// In this way, feedback items response for email use the same Get and Iterate
+// functions.
 func (eb *EmailButtons) Feedback() *FeedbackItems {
 	return &FeedbackItems{
 		resource: resource{
