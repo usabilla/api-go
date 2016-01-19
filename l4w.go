@@ -36,12 +36,14 @@ const (
 	websitesURI = "/live/websites"
 	buttonURI   = websitesURI + "/button"
 	campaignURI = websitesURI + "/campaign"
+	inpageURI   = websitesURI + "/inpage"
 )
 
 var (
 	feedbackURI        = buttonURI + "/%s/feedback"
 	campaignResultsURI = campaignURI + "/%s/results"
 	campaignStatsURI   = campaignURI + "/%s/stats"
+	inpageFeedbackURI  = inpageURI + "/%s/feedback"
 )
 
 // Button represents a button item.
@@ -70,7 +72,7 @@ type FeedbackItem struct {
 }
 
 // Campaign represents a campaign item.
-type Campaign struct {
+type CampaignStruct struct {
 	ID          string    `json:"id"`
 	Date        time.Time `json:"date"`
 	ButtonID    string    `json:"buttonId"`
@@ -81,7 +83,7 @@ type Campaign struct {
 }
 
 // CampaignResult represents a campaign result item.
-type CampaignResult struct {
+type CampaignResultStruct struct {
 	ID         string                 `json:"id"`
 	UserAgent  string                 `json:"userAgent"`
 	Location   string                 `json:"location"`
@@ -94,11 +96,38 @@ type CampaignResult struct {
 }
 
 // CampaignStat represents a campaign statistics item.
-type CampaignStat struct {
+type CampaignStatStruct struct {
 	ID         string `json:"id"`
 	Completed  int    `json:"completed"`
 	Conversion int    `json:"conversion"`
 	Views      int    `json:"views"`
+}
+
+type InpageWidgetStruct struct {
+	ID   string 		`json:"id"`
+	Date time.Time      `json:"date"`
+	Name string        	`json:"name"`
+}
+
+type InpageWidgetFeedbackStruct struct {
+	ID         string          		  `json:"id"`
+	Date       time.Time              `json:"date"`
+	Data       map[string]interface{} `json:"data"`
+	CustomData map[string]interface{} `json:"customData"`
+	Widget_ID  string          		  `json:"widgetId"`
+	Rating     float64                `json:"rating"`
+	Mood       int                    `json:"mood"`
+	Nps        int                    `json:"nps,omitempty"`
+	Comment    string                 `json:"comment"`
+	UserAgent  string                 `json:"userAgent"`
+	Geo        GeoLoc                 `json:"geo"`
+	Url        string                 `json:"url"`
+}
+
+type GeoLoc struct {
+	Country string `json:"country"`
+	Region  string `json:"region"`
+	City    string `json:"city"`
 }
 
 // ButtonResponse is a response that contains button data.
@@ -116,19 +145,31 @@ type FeedbackResponse struct {
 // CampaignResponse is a response that contains campaign data.
 type CampaignResponse struct {
 	response
-	Items []Campaign `json:"items"`
+	Items []CampaignStruct `json:"items"`
 }
 
 // CampaignResultResponse is a response that contains campaign result data.
 type CampaignResultResponse struct {
 	response
-	Items []CampaignResult `json:"items"`
+	Items []CampaignResultStruct `json:"items"`
 }
 
 // CampaignStatsResponse is a response that contains campaign statistics data.
 type CampaignStatsResponse struct {
 	response
-	Items []CampaignStat `json:"items"`
+	Items []CampaignStatStruct `json:"items"`
+}
+
+// InpageWidgetResponse is a response that lists inpage widgets.
+type InpageWidgetResponse struct {
+	response
+	Items []InpageWidgetStruct `json:"items"`
+}
+
+// InpageWidgetFeedbackResponse is the response with in-page feedback data.
+type InpageWidgetFeedbackResponse struct {
+	response
+	Items []InpageWidgetFeedbackStruct `json:"items"`
 }
 
 // Buttons represents the button resource of Usabilla API.
@@ -157,6 +198,18 @@ type CampaignResults struct {
 
 // CampaignStats represents the campaign statistics resource of Usabilla API.
 type CampaignStats struct {
+	resource
+	client *http.Client
+}
+
+// InpageWidgets represents the inpage widgets resource of Usabilla API.
+type InpageWidgets struct {
+	resource
+	client *http.Client
+}
+
+// InpageWidgetFeedbackItems represents the inpage feedbacks resource of Usabilla API.
+type InpageWidgetFeedbackItems struct {
 	resource
 	client *http.Client
 }
@@ -217,6 +270,32 @@ func NewCampaignResultResponse(data []byte) (*CampaignResultResponse, error) {
 // campaign statistics response to Go struct.
 func NewCampaignStatsResponse(data []byte) (*CampaignStatsResponse, error) {
 	response := &CampaignStatsResponse{}
+
+	err := json.Unmarshal(data, &response)
+	if err != nil {
+		return response, err
+	}
+
+	return response, nil
+}
+
+// NewInpageWidgetResponse creates a inpage response and unmarshals json API
+// inpage response to Go struct.
+func NewInpageWidgetResponse(data []byte) (*InpageWidgetResponse, error) {
+	response := &InpageWidgetResponse{}
+
+	err := json.Unmarshal(data, &response)
+	if err != nil {
+		return response, err
+	}
+
+	return response, nil
+}
+
+// NewInpageWidgetFeedbackResponse creates a new inpage feedback response and unmarshals json API
+// inpage feedback response to Go struct.
+func NewInpageWidgetFeedbackResponse(data []byte) (*InpageWidgetFeedbackResponse, error) {
+	response := &InpageWidgetFeedbackResponse{}
 
 	err := json.Unmarshal(data, &response)
 	if err != nil {
@@ -392,16 +471,16 @@ func (r *CampaignResults) Get(campaignID string, params map[string]string) (*Cam
 
 // Iterate uses a CampaignResult channel which transparently uses the HasMore field to fire
 // a new api request once all results have been consumed on the channel
-func (r *CampaignResults) Iterate(campaignID string, params map[string]string) chan CampaignResult {
+func (r *CampaignResults) Iterate(campaignID string, params map[string]string) chan CampaignResultStruct {
 	resp, err := r.Get(campaignID, params)
 
 	if err != nil {
 		panic(err)
 	}
 
-	crc := make(chan CampaignResult)
+	crc := make(chan CampaignResultStruct)
 
-	go campaignResults(crc, resp, r, campaignID)
+	go yieldCampaignResults(crc, resp, r, campaignID)
 
 	return crc
 }
@@ -413,7 +492,7 @@ func (r *CampaignResults) Iterate(campaignID string, params map[string]string) c
 // retrieve new items
 //
 // when HasMore is false, we close the channel
-func campaignResults(crc chan CampaignResult, resp *CampaignResultResponse, r *CampaignResults, campaignID string) {
+func yieldCampaignResults(crc chan CampaignResultStruct, resp *CampaignResultResponse, r *CampaignResults, campaignID string) {
 	for {
 		for _, item := range resp.Items {
 			crc <- item
@@ -432,7 +511,7 @@ func campaignResults(crc chan CampaignResult, resp *CampaignResultResponse, r *C
 			panic(err)
 		}
 
-		campaignResults(crc, resp, r, campaignID)
+		yieldCampaignResults(crc, resp, r, campaignID)
 
 		return
 	}
@@ -475,16 +554,16 @@ func (cs *CampaignStats) Get(campaignID string, params map[string]string) (*Camp
 
 // Iterate uses a CampaignStat channel which transparently uses the HasMore field to fire
 // a new api request once all stats items have been consumed on the channel.
-func (cs *CampaignStats) Iterate(campaignID string, params map[string]string) chan CampaignStat {
+func (cs *CampaignStats) Iterate(campaignID string, params map[string]string) chan CampaignStatStruct {
 	resp, err := cs.Get(campaignID, params)
 
 	if err != nil {
 		panic(err)
 	}
 
-	csc := make(chan CampaignStat)
+	csc := make(chan CampaignStatStruct)
 
-	go campaignStats(csc, resp, cs, campaignID)
+	go yieldCampaignStats(csc, resp, cs, campaignID)
 
 	return csc
 }
@@ -496,7 +575,7 @@ func (cs *CampaignStats) Iterate(campaignID string, params map[string]string) ch
 // retrieve new items
 //
 // when HasMore is false, we close the channel
-func campaignStats(csc chan CampaignStat, resp *CampaignStatsResponse, cs *CampaignStats, campaignID string) {
+func yieldCampaignStats(csc chan CampaignStatStruct, resp *CampaignStatsResponse, cs *CampaignStats, campaignID string) {
 	for {
 		for _, item := range resp.Items {
 			csc <- item
@@ -515,8 +594,125 @@ func campaignStats(csc chan CampaignStat, resp *CampaignStatsResponse, cs *Campa
 			panic(err)
 		}
 
-		campaignStats(csc, resp, cs, campaignID)
+		yieldCampaignStats(csc, resp, cs, campaignID)
 
+		return
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+////////////// Inpage //////////////
+// Get function of Inpage resource returns all the Inpage Widgets
+// taking into account the provided query parameters.
+//
+// Valid query parameters are:
+//  limit int
+//  since string (Time stamp)
+func (c *InpageWidgets) Get(params map[string]string) (*InpageWidgetResponse, error) {
+	request := request{
+		method: "GET",
+		auth:   c.auth,
+		uri:    inpageURI,
+		params: params,
+		client: c.client,
+	}
+
+	data, err := request.get()
+	if err != nil {
+		panic(err)
+	}
+
+	return NewInpageWidgetResponse(data)
+}
+
+// Results encapsulates the inpage feedback resource.
+func (c *InpageWidgets) Feedback() *InpageWidgetFeedbackItems {
+	return &InpageWidgetFeedbackItems{
+		resource: resource{
+			auth: c.auth,
+		},
+		client: c.client,
+	}
+}
+
+// Get function of CampaignResults resource returns all the campaign result items
+// for a specific campaign, taking into account the provided query parameters.
+//
+// Valid query params are:
+//  limit int
+//  since string (Time stamp)
+func (r *InpageWidgetFeedbackItems) Get(inpageID string, params map[string]string) (*InpageWidgetFeedbackResponse, error) {
+	uri := fmt.Sprintf(inpageFeedbackURI, inpageID)
+
+	request := request{
+		method: "GET",
+		auth:   r.auth,
+		uri:    uri,
+		params: params,
+		client: r.client,
+	}
+
+	data, err := request.get()
+	if err != nil {
+		panic(err)
+	}
+
+	return NewInpageWidgetFeedbackResponse(data)
+}
+
+// Iterate uses a InpageWidgetFeedbackItems channel which transparently uses the HasMore field to fire
+// a new api request once all results have been consumed on the channel
+func (r *InpageWidgetFeedbackItems) Iterate(inpageID string, params map[string]string) chan InpageWidgetFeedbackStruct {
+	resp, err := r.Get(inpageID, params)
+
+	if err != nil {
+		panic(err)
+	}
+
+	crc := make(chan InpageWidgetFeedbackStruct)
+
+	go yieldInpageWidgetFeedbackItems(crc, resp, r, inpageID)
+
+	return crc
+}
+
+// yieldInpageWidgetFeedbackItems feeds a inpage results channel with items
+//
+// while hasMore is true and all items have been consumed in the channel
+// a new request is fired using the since parameter of the response, to
+// retrieve new items
+//
+// when HasMore is false, we close the channel
+func yieldInpageWidgetFeedbackItems(crc chan InpageWidgetFeedbackStruct, resp *InpageWidgetFeedbackResponse, r *InpageWidgetFeedbackItems, inpageID string) {
+	for {
+		for _, item := range resp.Items {
+			crc <- item
+		}
+		if !resp.HasMore {
+			close(crc)
+			return
+		}
+		params := map[string]string{
+			"since": strconv.FormatInt(resp.LastTimestamp, 10),
+		}
+
+		resp, err := r.Get(inpageID, params)
+
+		if err != nil {
+			panic(err)
+		}
+
+		yieldInpageWidgetFeedbackItems(crc, resp, r, inpageID)
 		return
 	}
 }

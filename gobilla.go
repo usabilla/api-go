@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2015 Usabilla
+Copyright (c) 2016 Usabilla
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the
@@ -85,6 +85,16 @@ func (gb *Gobilla) Apps() *Apps {
 // EmailButtons encapsulates the email button resource.
 func (gb *Gobilla) EmailButtons() *EmailButtons {
 	return &EmailButtons{
+		resource: resource{
+			auth: gb.auth,
+		},
+		client: gb.Client,
+	}
+}
+
+// Inpage encapsulates the app resource.
+func (gb *Gobilla) InpageWidgets() *InpageWidgets {
+	return &InpageWidgets{
 		resource: resource{
 			auth: gb.auth,
 		},
