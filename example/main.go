@@ -51,6 +51,27 @@ func buttonsIterator(usabilla *usabilla.Usabilla) {
 	fmt.Printf("RECEIVED FEEDBACK FROM %d BUTTONS\n", buttons.Count)
 }
 
+func appCampaigns(usabilla *usabilla.Usabilla) {
+	resource := usabilla.AppCampaigns()
+
+	campaigns, err := resource.Get(nil)
+	if err != nil {
+		fmt.Errorf("%s", err)
+	}
+
+	for _, campaign := range campaigns.Items {
+		count := 0
+		fmt.Printf("START PRINTING RESULTS FOR CAMPAIGN: %s\n", campaign.ID)
+		for result := range resource.Results().Iterate(campaign.ID, nil) {
+			fmt.Printf("Result %s\n", result.ID)
+			count++
+		}
+		fmt.Printf("Received %d results\n", count)
+	}
+
+	fmt.Printf("FOUND %d CAMPAIGNS IN TOTAL\n", campaigns.Count)
+}
+
 func main() {
 	key := os.Getenv("USABILLA_API_KEY")
 	secret := os.Getenv("USABILLA_API_SECRET")
@@ -66,4 +87,7 @@ func main() {
 	// consumed and the response HasMore then it fires a new request
 	// for all feedback items for all buttons.
 	buttonsIterator(usabilla)
+
+	// Display App campaigns and their results
+	appCampaigns(usabilla)
 }

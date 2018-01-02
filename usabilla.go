@@ -82,6 +82,16 @@ func (usabilla *Usabilla) Apps() *Apps {
 	}
 }
 
+// AppsCampaigns encapsulates the AppCampaigns resource
+func (usabilla *Usabilla) AppCampaigns() *AppCampaigns {
+	return &AppCampaigns{
+		resource: resource{
+			auth: usabilla.auth,
+		},
+		client: usabilla.Client,
+	}
+}
+
 // EmailButtons encapsulates the email button resource.
 func (usabilla *Usabilla) EmailButtons() *EmailButtons {
 	return &EmailButtons{
