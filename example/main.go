@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/usabilla/gobilla"
+	"github.com/usabilla/api-go"
 )
 
-func buttons(gb *gobilla.Gobilla) {
-	b := gb.Buttons()
+func buttons(usabilla *usabilla.Usabilla) {
+	b := usabilla.Buttons()
 
 	buttons, err := b.Get(nil)
 	if err != nil {
@@ -31,8 +31,8 @@ func buttons(gb *gobilla.Gobilla) {
 	fmt.Printf("RECEIVED FEEDBACK FROM %d BUTTONS\n", buttons.Count)
 }
 
-func buttonsIterator(gb *gobilla.Gobilla) {
-	b := gb.Buttons()
+func buttonsIterator(usabilla *usabilla.Usabilla) {
+	b := usabilla.Buttons()
 
 	buttons, err := b.Get(nil)
 	if err != nil {
@@ -57,13 +57,13 @@ func main() {
 
 	// You can pass a custom http.Client
 	// We pass nil to use the http.DefaultClient
-	gb := gobilla.New(key, secret, nil)
+	usabilla := usabilla.New(key, secret, nil)
 
 	// Uses a simple GET to get all feedback items for all buttons.
-	buttons(gb)
+	buttons(usabilla)
 
 	// Uses a channel of feedback items, and once all items have been
 	// consumed and the response HasMore then it fires a new request
 	// for all feedback items for all buttons.
-	buttonsIterator(gb)
+	buttonsIterator(usabilla)
 }

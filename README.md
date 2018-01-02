@@ -1,9 +1,9 @@
-# Gobilla
+# Usabilla
 
-Gobilla is a Go client for [Usabilla API](https://usabilla.com/api).
+This is a Go client for [Usabilla API](https://usabilla.com/api).
 
-[![Build Status](https://travis-ci.org/usabilla/gobilla.svg?branch=master)](https://travis-ci.org/usabilla/gobilla)
-[![GoDoc](http://godoc.org/github.com/usabilla/gobilla?status.svg)](http://godoc.org/github.com/usabilla/gobilla)
+[![Build Status](https://travis-ci.org/usabilla/api-go.svg?branch=master)](https://travis-ci.org/usabilla/api-go)
+[![GoDoc](http://godoc.org/github.com/usabilla/api-go?status.svg)](http://godoc.org/github.com/usabilla/api-go)
 
 ## Getting Started
 
@@ -16,7 +16,7 @@ import (
     "os"
     "fmt"
 
-    "github.com/usabilla/gobilla"
+    "github.com/usabilla/api-go"
 )
 
 func main() {
@@ -24,14 +24,14 @@ func main() {
     secret := os.Getenv("USABILLA_API_SECRET")
 
     // Pass the key and secret which should be defined as ENV vars
-    gb := gobilla.New(key, secret)
-    
-    b := gb.Buttons()
+    usabilla := usabilla.New(key, secret)
+
+    resource := usabilla.Buttons()
 
     // Get the first ten buttons
     params := map[string]string{"limit": "10"}
-    buttons, _ := b.Get(params)
-    
+    buttons, _ := resource.Get(params)
+
     // Print all feedback items for each button
     for _, button := range buttons.Items {
         feedback, _ := b.Feedback().Get(button.ID, nil)
@@ -40,13 +40,13 @@ func main() {
 }
 ```
 
-Then install Gobilla package
+Then install usabilla package
 
-    go get github.com/usabilla/gobilla
+    go get github.com/usabilla/api-go
 
 Run the file
 
-    go run main.go 
+    go run main.go
 
 And you will get all feedback items for each button.
 
