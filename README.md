@@ -2,7 +2,7 @@
 
 This is a Go client for [Usabilla API](https://usabilla.com/api).
 
-[![Build Status](https://travis-ci.org/usabilla/api-go.svg?branch=master)](https://travis-ci.org/usabilla/api-go)
+[![CircleCI](https://circleci.com/gh/usabilla/api-go.svg?style=svg)](https://circleci.com/gh/usabilla/api-go)
 [![GoDoc](http://godoc.org/github.com/usabilla/api-go?status.svg)](http://godoc.org/github.com/usabilla/api-go)
 
 ## Getting Started
