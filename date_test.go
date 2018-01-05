@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2015 Usabilla
+Copyright (c) 2018 Usabilla
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the
@@ -21,13 +21,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 */
 
-package gobilla
+package usabilla
 
 import (
 	"testing"
 	"time"
 
-	"github.com/usabilla/gobilla/internal"
+	"github.com/usabilla/api-go/internal"
 )
 
 var (

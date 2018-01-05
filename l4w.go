@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2015 Usabilla
+Copyright (c) 2018 Usabilla
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the
@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 */
 
-package gobilla
+package usabilla
 
 import (
 	"encoding/json"
@@ -104,17 +104,17 @@ type CampaignStatStruct struct {
 }
 
 type InpageWidgetStruct struct {
-	ID   string 		`json:"id"`
-	Date time.Time      `json:"date"`
-	Name string        	`json:"name"`
+	ID   string    `json:"id"`
+	Date time.Time `json:"date"`
+	Name string    `json:"name"`
 }
 
 type InpageWidgetFeedbackStruct struct {
-	ID         string          		  `json:"id"`
+	ID         string                 `json:"id"`
 	Date       time.Time              `json:"date"`
 	Data       map[string]interface{} `json:"data"`
 	CustomData map[string]interface{} `json:"customData"`
-	Widget_ID  string          		  `json:"widgetId"`
+	Widget_ID  string                 `json:"widgetId"`
 	Rating     float64                `json:"rating"`
 	Mood       int                    `json:"mood"`
 	Nps        int                    `json:"nps,omitempty"`
@@ -599,17 +599,6 @@ func yieldCampaignStats(csc chan CampaignStatStruct, resp *CampaignStatsResponse
 		return
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
 
 ////////////// Inpage //////////////
 // Get function of Inpage resource returns all the Inpage Widgets

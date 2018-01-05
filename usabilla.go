@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2016 Usabilla
+Copyright (c) 2018 Usabilla
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the
@@ -21,29 +21,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 IN THE SOFTWARE.
 */
 
-// Package gobilla provides a wrapper around Usabilla Public API.
+// Package usabilla provides a wrapper around Usabilla Public API.
 //
 // https://usabilla.com/api
-package gobilla
+package usabilla
 
 import "net/http"
 
-// Gobilla is the client that exposes all the resources of the Usabilla API.
+// Usabilla is the client that exposes all the resources of the Usabilla API.
 // You can provide a custom http client to change the way the client works.
-type Gobilla struct {
+type Usabilla struct {
 	auth   auth
 	Client *http.Client
 }
 
-// New creates a new Gobilla instance and sets the auth with key and secret.
+// New creates a new Usabilla instance and sets the auth with key and secret.
 // Client is the default http client. To change the way the client works
 // provide a custom http client. Passing nil will use the http.DefaultClient
-func New(key, secret string, customClient *http.Client) *Gobilla {
+func New(key, secret string, customClient *http.Client) *Usabilla {
 	client := http.DefaultClient
 	if customClient != nil {
 		client = customClient
 	}
-	return &Gobilla{
+	return &Usabilla{
 		auth: auth{
 			key:    key,
 			secret: secret,
@@ -53,51 +53,61 @@ func New(key, secret string, customClient *http.Client) *Gobilla {
 }
 
 // Buttons encapsulates the button resource.
-func (gb *Gobilla) Buttons() *Buttons {
+func (usabilla *Usabilla) Buttons() *Buttons {
 	return &Buttons{
 		resource: resource{
-			auth: gb.auth,
+			auth: usabilla.auth,
 		},
-		client: gb.Client,
+		client: usabilla.Client,
 	}
 }
 
 // Campaigns encapsulates the campaign resource.
-func (gb *Gobilla) Campaigns() *Campaigns {
+func (usabilla *Usabilla) Campaigns() *Campaigns {
 	return &Campaigns{
 		resource: resource{
-			auth: gb.auth,
+			auth: usabilla.auth,
 		},
-		client: gb.Client,
+		client: usabilla.Client,
 	}
 }
 
 // Apps encapsulates the app resource.
-func (gb *Gobilla) Apps() *Apps {
+func (usabilla *Usabilla) Apps() *Apps {
 	return &Apps{
 		resource: resource{
-			auth: gb.auth,
+			auth: usabilla.auth,
 		},
-		client: gb.Client,
+		client: usabilla.Client,
+	}
+}
+
+// AppsCampaigns encapsulates the AppCampaigns resource
+func (usabilla *Usabilla) AppCampaigns() *AppCampaigns {
+	return &AppCampaigns{
+		resource: resource{
+			auth: usabilla.auth,
+		},
+		client: usabilla.Client,
 	}
 }
 
 // EmailButtons encapsulates the email button resource.
-func (gb *Gobilla) EmailButtons() *EmailButtons {
+func (usabilla *Usabilla) EmailButtons() *EmailButtons {
 	return &EmailButtons{
 		resource: resource{
-			auth: gb.auth,
+			auth: usabilla.auth,
 		},
-		client: gb.Client,
+		client: usabilla.Client,
 	}
 }
 
 // Inpage encapsulates the app resource.
-func (gb *Gobilla) InpageWidgets() *InpageWidgets {
+func (usabilla *Usabilla) InpageWidgets() *InpageWidgets {
 	return &InpageWidgets{
 		resource: resource{
-			auth: gb.auth,
+			auth: usabilla.auth,
 		},
-		client: gb.Client,
+		client: usabilla.Client,
 	}
 }
