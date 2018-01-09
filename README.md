@@ -24,7 +24,7 @@ func main() {
     secret := os.Getenv("USABILLA_API_SECRET")
 
     // Pass the key and secret which should be defined as ENV vars
-    usabilla := usabilla.New(key, secret)
+    usabilla := usabilla.New(key, secret, nil)
 
     resource := usabilla.Buttons()
 
@@ -34,7 +34,7 @@ func main() {
 
     // Print all feedback items for each button
     for _, button := range buttons.Items {
-        feedback, _ := b.Feedback().Get(button.ID, nil)
+        feedback, _ := resource.Feedback().Get(button.ID, nil)
         fmt.Printf("Feedback for button: %s\n%v\n", button.ID, feedback.Items)
     }
 }
