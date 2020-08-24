@@ -89,7 +89,7 @@ type CampaignResultStruct struct {
 	Location   string                 `json:"location"`
 	Date       time.Time              `json:"date"`
 	CampaignID string                 `json:"campaignId"`
-	Custom     map[string]string      `json:"custom"`
+	CustomData map[string]string      `json:"customData"`
 	Data       map[string]interface{} `json:"data"`
 	URL        string                 `json:"url"`
 	Time       float64                `json:"time"`
